@@ -1,9 +1,12 @@
+import Task from "@/components/mobile/task";
 import React from "react";
 
 const page = () => {
  
 
-  return <div>Tap here</div>;
+  return <div>
+    <Task />
+  </div>;
 };
 
 export default page;

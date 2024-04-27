@@ -5,3 +5,4 @@ export { default as BoostIcon } from "./Boost.svg";
 export { default as IconStat } from "./iconoir_stats-up-square-solid.svg";
 export { default as MoneyBagIcon } from "./healthicons_money-bag.svg";
 export { default as LightBolt } from "./lightBolt.png";
+export { default as ArrowRight } from "./oui_arrow-up.svg";
