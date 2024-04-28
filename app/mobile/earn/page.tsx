@@ -1,11 +1,12 @@
-import React from 'react';
+import Earn from "@/components/mobile/earn";
+import React from "react";
 
 const page = () => {
-    return (
-        <div>
-            Tap here
-        </div>
-    );
+  return (
+    <div>
+      <Earn />
+    </div>
+  );
 };
 
 export default page;
