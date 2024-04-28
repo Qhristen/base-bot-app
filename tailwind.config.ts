@@ -12,7 +12,13 @@ const config: Config = {
         "primary": "var(--primary)",
         "black": "var(--background)",
         "gray": "var(--gray)",
+        "gray-light": "var(--gray-light)",
         "yellow": "var(--yellow)",
+        "overlay": "var(--overlay)",
+        "destructive": "var(--destructive)",
+        "destructive-foreground": "var(--destructive-foreground)",
+        "green": "var(--green)",
+        "green-foreground": "var(--green-foreground)",
       }
     },
   },

@@ -1,4 +1,4 @@
-import { LightBolt, TableUserFiled } from "@/assets/icons";
+import { BaseLogoSm, LightBolt, TableUserFiled } from "@/assets/icons";
 import { BaseLogoLg, NoviceBadge } from "@/assets/images";
 import Image from "next/image";
 import React, { useContext } from "react";
@@ -6,6 +6,7 @@ import Container from "../container";
 import { Button } from "../ui/Button";
 import { Progress } from "../ui/ProgressBar";
 import { TelegramContext, useTelegram } from "@/context/telegram-context";
+import Notification from "../notification";
 
 const Tap = () => {
   // const { user, webApp } = useContext(TelegramContext);
@@ -31,13 +32,13 @@ const Tap = () => {
         </div>
 
         <div className="flex flex-col items-center justify-center mt-10">
-          <div className="text-gray">Your coins</div>
+          <div className="text-gray-light">Your coins</div>
           <h1 className="text-4xl font-black text-white">2521</h1>
         </div>
-        <div className="flex items-center justify-center mt-10">
-          <Image alt="logo" src={BaseLogoLg} />
+        <div className="flex items-center gap-0 justify-center mt-10">
+            <BaseLogoSm />
         </div>
-        <h1 className="text-4xl text-white font-black mt-10 text-center">
+        <h1 className="text-4xl text-white font-black text-center mt-10">
           Tap
         </h1>
       </div>

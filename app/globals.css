@@ -9,7 +9,13 @@
   --primary: rgba(23, 210, 251, 1);
   --background: rgba(3, 7, 16, 1);
   --gray: rgba(255, 255, 255, 0.2);
+  --gray-light: rgba(167, 163, 163, 1);
   --yellow: rgba(227, 195, 23, 1);
+  --overlay: rgba(0, 0, 0, 0.5);
+  --green: rgba(13, 168, 88, 1);
+  --destructive: rgba(168, 60, 13, 1);
+  --destructive-foreground: rgba(249, 225, 217, 1);
+  --green-foreground: rgba(242, 249, 217, 1);
 
 }
 

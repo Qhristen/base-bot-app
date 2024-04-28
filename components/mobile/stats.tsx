@@ -13,7 +13,7 @@ const Stats = () => {
       {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
       <div className="flex w-full h-full flex-col justify-between p-5 mb-40">
         <div className="flex flex-col items-start justify-start mt-10">
-          <div className="text-gray mix-blend-plus-lighter">Total balance</div>
+          <div className="text-gray-light mix-blend-plus-lighter">Total balance</div>
           <h1 className="text-4xl font-black text-white">9.232 T</h1>
         </div>
 
