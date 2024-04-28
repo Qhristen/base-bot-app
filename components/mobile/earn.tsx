@@ -18,7 +18,7 @@ const Earn = () => {
       {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
       <div className="flex w-full h-full flex-col justify-between p-5 mb-40">
         <div className="flex flex-col items-start justify-start mt-7">
-          <h1 className="text-4xl font-bold text-white">Earn more Dotcoins</h1>
+          <h1 className="text-4xl font-bold text-white">Earn more <br /> Dotcoins</h1>
         </div>
         <div className="bg-gray rounded-2xl p-4 mt-10">
           <div className="flex items-center justify-between">
