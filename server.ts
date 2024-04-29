@@ -10,6 +10,8 @@ const bot = new Telegraf(`${process.env.TELEGRAM_TOKEN}`);
 
 const web_link = "https://base-bot-app.vercel.app/mobile/tap";
 
+
+
 app.prepare().then(() => {
   const server = express();
   bot.start((ctx) => {

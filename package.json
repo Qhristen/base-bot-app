@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "ts-node server.ts",
-    "build": "next build",
-    "start": "NODE_ENV=production ts-node server.js",
+    "build:server": "tsc --project tsconfig.server.json",
+    "build:next": "next build",
+    "dev": "nodemon ts-node server.ts",
+    "build": "npm run build:next && npm run build:server",
+    "start": "NODE_ENV=production node dist/server.js",
     "lint": "next lint"
   },
   "dependencies": {
