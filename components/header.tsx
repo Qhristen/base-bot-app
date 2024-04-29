@@ -4,7 +4,7 @@ import { Button } from "./ui/Button";
 
 const Header = () => {
   return (
-    <div className="flex items-center justify-between py-10">
+    <div className="flex items-center justify-between py-3 p-4 lg:py-10">
       <LogoIcon />
       <Button variant={`primary`}>Join Base</Button>
     </div>

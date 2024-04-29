@@ -9,23 +9,24 @@ export default function Home() {
   return (
     <Container>
       <Header />
-      <div className="flex items-center justify-between gap-2 text-white">
-        <div>
-          <h1 className="font-bold text-6xl">
-            Tap into the Future of <br /> Crypto Earnings
+      <div className="flex items-center justify-between gap-2  text-white p-4 flex-col-reverse lg:flex-row">
+        <div className="">
+          <h1 className="font-bold text-4xl">
+            Tap into the Future of Crypto Earnings
           </h1>
           <p className="py-6 text-gray-light">
-            Tap on the coin and see your balance rise – experience <br /> the
+            Tap on the coin and see your balance rise – experience the
             thrill of earning crypto effortlessly with Base.
           </p>
           <Button variant={`primary`}>Join Base</Button>
         </div>
-
-        <BaseLogoLg />
+        <div className="scale-50 hideen lg:block lg:scale-100">
+          <BaseLogoLg className="" />
+        </div>
         {/* <Image src={BaseLogoLg} width={500} height={300} alt="BaseLogoLg" /> */}
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mt-20">
+      <div className="grid md:grid-cols-2 gap-4 mt-20 p-4">
         <div className="flex items-center gap-3 p-5 text-white bg-gray rounded-2xl">
           <Image src={NoviceBadge} width={400} height={200} alt="NoviceBadge" />
           <div>
@@ -51,7 +52,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="p-5 text-center text-white bg-gray my-20 py-20 rounded-2xl">
+      <div className="p-5 m-4 text-center text-white bg-gray my-20 py-20 rounded-2xl">
         <h1 className="font-bold text-3xl py-4">
           Join our telegram community to <br /> explore more
         </h1>
