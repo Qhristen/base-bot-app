@@ -2,6 +2,7 @@ import express from "express";
 import next from "next";
 import { Telegraf } from "telegraf";
 import { prisma } from "./prisma/db";
+import 'dotenv/config'
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
