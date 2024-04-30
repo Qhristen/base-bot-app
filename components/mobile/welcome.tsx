@@ -4,6 +4,7 @@ import Image from "next/image";
 import React from "react";
 import Container from "../container";
 import { Button } from "../ui/Button";
+import Link from "next/link";
 
 const Welcome = () => {
   return (
@@ -16,16 +17,18 @@ const Welcome = () => {
           </div>
         </div>
         <div className="flex items-center justify-center mt-10">
-            <BaseLogoSm />
+          <BaseLogoSm />
           {/* <Image alt="logo" src={BaseLogoLg} /> */}
         </div>
         <div className="text-center mt-10">
           <h5 className="font-bold text-lg">Welcome to Base</h5>
           <p>Tap on the coin and see your balance rise</p>
         </div>
-        <Button size={`lg`} className="w-full mt-20" variant={`primary`}>
-          Get started
-        </Button>
+        <Link href={`/mobile/tap`}>
+          <Button size={`lg`} className="w-full mt-20" variant={`primary`}>
+            Get started
+          </Button>
+        </Link>
       </div>
     </Container>
   );
