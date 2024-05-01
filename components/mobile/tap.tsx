@@ -1,3 +1,5 @@
+"use client";
+
 import { BaseLogoSm, LightBolt, TableUserFiled } from "@/assets/icons";
 import { BaseLogoLg, NoviceBadge } from "@/assets/images";
 import Image from "next/image";
@@ -9,11 +11,10 @@ import { TelegramContext, useTelegram } from "@/context/telegram-context";
 import Notification from "../notification";
 
 const Tap = () => {
-  // const { user, webApp } = useContext(TelegramContext);
-  // console.log(user, "user");
+  const { user, webApp } = useContext(TelegramContext);
+  console.log(webApp, "webApp");
   return (
     <Container>
-      {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
       <div className="flex w-full h-full flex-col justify-between p-5 mb-40">
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-1">
@@ -33,7 +34,7 @@ const Tap = () => {
 
         <div className="flex flex-col items-center justify-center mt-10">
           <div className="text-gray-light">Your coins</div>
-          <h1 className="text-4xl font-black text-white">2521</h1>
+          <h1 className="text-4xl font-black text-white">25231</h1>
         </div>
         <div className="flex items-center gap-0 justify-center mt-10">
             <BaseLogoSm />

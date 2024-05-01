@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { ITelegramUser, IWebApp } from "@/types";
 import Script from "next/script";
@@ -25,6 +25,18 @@ export const TelegramProvider = ({
       setWebApp(app);
     }
   }, []);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/validate-init", {
+      method: "POST",
+      body: webApp?.initData,
+    }).then((res) => res);
+  }, [webApp?.initData]);
+
+//   if (!webApp?.initDataUnsafe.query_id) {
+//     alert('WebViewQueryId not defined');
+//     return;
+// }
 
   const value = useMemo(() => {
     return webApp

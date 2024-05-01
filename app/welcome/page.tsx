@@ -1,11 +1,12 @@
 import Welcome from "@/components/mobile/welcome";
+import { TelegramProvider } from "@/context/telegram-context";
 import React from "react";
 
 const page = () => {
   return (
-    <div>
+    <TelegramProvider>
       <Welcome />
-    </div>
+    </TelegramProvider>
   );
 };
 
