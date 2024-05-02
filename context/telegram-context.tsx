@@ -26,18 +26,6 @@ export const TelegramProvider = ({
     }
   }, []);
 
-  useEffect(() => {
-    fetch("http://localhost:8000/api/validate-init", {
-      method: "POST",
-      body: webApp?.initData,
-    }).then((res) => res);
-  }, [webApp?.initData]);
-
-//   if (!webApp?.initDataUnsafe.query_id) {
-//     alert('WebViewQueryId not defined');
-//     return;
-// }
-
   const value = useMemo(() => {
     return webApp
       ? {

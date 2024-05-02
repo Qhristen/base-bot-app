@@ -1,9 +1,7 @@
 import { ArcticonsCoinGold, LightBolt } from "@/assets/icons";
 import Image from "next/image";
-import React, { useContext } from "react";
 import Container from "../container";
 import { Button } from "../ui/Button";
-import { TelegramContext, useTelegram } from "@/context/telegram-context";
 import {
   Dialog,
   DialogContent,

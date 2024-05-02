@@ -3,14 +3,18 @@
 import { BaseLogoSm, TableUserFiled } from "@/assets/icons";
 import { BaseLogoLg } from "@/assets/images";
 import Image from "next/image";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import Container from "../container";
 import { Button } from "../ui/Button";
 import Link from "next/link";
 import { TelegramContext } from "@/context/telegram-context";
 
 const Welcome = () => {
-  const { user, webApp } = useContext(TelegramContext);
+  const { webApp, user } = useContext(TelegramContext);
+  
+  useEffect(() => {
+    webApp?.expand();
+  }, [webApp]);
 
   return (
     <Container>
@@ -19,7 +23,7 @@ const Welcome = () => {
           <div
             className="flex justify-center"
             onClick={async () => {
-             webApp?.sendData(JSON.stringify({ data: "test" }));
+              webApp?.sendData(JSON.stringify({ data: "test" }));
             }}
           >
             <div className="flex gap-2 items-center w-max justify-center border-2 border-white rounded-2xl p-3">

@@ -1,18 +1,14 @@
 import {
   ArcticonsCoin,
-  ArrowRight,
-  LightBolt,
-  TableUserFiled,
+  ArrowRight
 } from "@/assets/icons";
-import { BaseLogoLg, NoviceBadge } from "@/assets/images";
+import { NoviceBadge } from "@/assets/images";
 import Image from "next/image";
-import React, { useContext } from "react";
+import Link from "next/link";
 import Container from "../container";
 import { Button } from "../ui/Button";
 import { Progress } from "../ui/ProgressBar";
-import { TelegramContext, useTelegram } from "@/context/telegram-context";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/Tab";
-import Link from "next/link";
 
 const Task = () => {
   // const { user, webApp } = useContext(TelegramContext);

@@ -1,18 +1,25 @@
 "use client";
 
-import { BaseLogoSm, LightBolt, TableUserFiled } from "@/assets/icons";
-import { BaseLogoLg, NoviceBadge } from "@/assets/images";
+import { BaseLogoSm, LightBolt } from "@/assets/icons";
+import { NoviceBadge } from "@/assets/images";
+import { TelegramContext } from "@/context/telegram-context";
 import Image from "next/image";
-import React, { useContext } from "react";
+import { useContext, useEffect } from "react";
 import Container from "../container";
-import { Button } from "../ui/Button";
 import { Progress } from "../ui/ProgressBar";
-import { TelegramContext, useTelegram } from "@/context/telegram-context";
-import Notification from "../notification";
 
 const Tap = () => {
   const { user, webApp } = useContext(TelegramContext);
   console.log(webApp, "webApp");
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/validate-init", {
+      method: "POST",
+      body: webApp?.initData,
+    }).then((res) => res.json());
+  }, [webApp]);
+
+
   return (
     <Container>
       <div className="flex w-full h-full flex-col justify-between p-5 mb-40">
@@ -37,7 +44,7 @@ const Tap = () => {
           <h1 className="text-4xl font-black text-white">25231</h1>
         </div>
         <div className="flex items-center gap-0 justify-center mt-10">
-            <BaseLogoSm />
+          <BaseLogoSm />
         </div>
         <h1 className="text-4xl text-white font-black text-center mt-10">
           Tap

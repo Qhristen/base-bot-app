@@ -9,6 +9,7 @@ export interface ITelegramUser {
 export interface IWebApp {
   initData: string;
   sendData: (data: any) => void;
+  expand: () => void;
   initDataUnsafe: {
     query_id: string;
     user: ITelegramUser;
