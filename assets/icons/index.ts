@@ -11,7 +11,7 @@ export { default as ArrowRight } from "./oui_arrow-up.svg";
 export { default as ShareIcon } from "./oui_share.svg";
 export { default as ArrowLeft } from "./majesticons_arrow-up.svg";
 export { default as InfoIcon } from "./ic_round-info.svg";
-export { default as LogoIcon } from "./logo.svg";
+export { default as LogoIcon } from "./logoicon.png";
 export { default as TwitterIcon } from "./mdi_twitter.svg";
 export { default as TelegramIcon } from "./ic_baseline-telegram.svg";
 export { default as BaseLogoSm } from "./baselogo.png";
