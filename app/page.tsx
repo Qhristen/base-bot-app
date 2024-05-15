@@ -1,3 +1,4 @@
+import { BaseLogoSm } from "@/assets/icons";
 import { BaseLogoLg, NoviceBadge } from "@/assets/images";
 import Container from "@/components/container";
 import Footer from "@/components/footer";
@@ -21,9 +22,9 @@ export default function Home() {
           <Button variant={`primary`}>Join Base</Button>
         </div>
         <div className="scale-50 hideen lg:block lg:scale-100">
-          <BaseLogoLg className="" />
+          {/* <BaseLogoLg className="" /> */}
+        <Image src={BaseLogoSm} width={500} height={300} alt="BaseLogoLg" />
         </div>
-        {/* <Image src={BaseLogoLg} width={500} height={300} alt="BaseLogoLg" /> */}
       </div>
 
       <div className="grid md:grid-cols-2 gap-4 mt-20 p-4">

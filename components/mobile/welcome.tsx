@@ -33,8 +33,8 @@ const Welcome = () => {
           </div>
         ) : null}
         <div className="flex items-center justify-center mt-10">
-          <BaseLogoSm />
-          {/* <Image alt="logo" src={BaseLogoLg} /> */}
+          {/* <BaseLogoSm /> */}
+          <Image alt="logo" src={BaseLogoSm} />
         </div>
         <div className="text-center mt-10">
           <h5 className="font-bold text-lg">Welcome to Base</h5>

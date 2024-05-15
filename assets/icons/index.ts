@@ -14,4 +14,4 @@ export { default as InfoIcon } from "./ic_round-info.svg";
 export { default as LogoIcon } from "./logo.svg";
 export { default as TwitterIcon } from "./mdi_twitter.svg";
 export { default as TelegramIcon } from "./ic_baseline-telegram.svg";
-export { default as BaseLogoSm } from "./baselogosm.svg";
+export { default as BaseLogoSm } from "./baselogo.png";

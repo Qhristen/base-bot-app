@@ -37,10 +37,17 @@ const Tap = () => {
           <h1 className="text-4xl font-black text-white">{count}</h1>
         </div>
         <div className="flex items-center gap-0 justify-center mt-10 cursor-pointer">
-          <BaseLogoSm
+          {/* <BaseLogoSm
             onClick={async () => {
               setCount(count + 1);
             }}
+          /> */}
+          <Image
+            onClick={async () => {
+              setCount(count + 1);
+            }}
+            alt="logo"
+            src={BaseLogoSm}
           />
         </div>
         <h1 className="text-4xl text-white font-black text-center select-none mt-10">
