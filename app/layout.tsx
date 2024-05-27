@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import local from "next/font/local";
 import "./globals.css";
+import ReactQueryProvider from "@/context/react-query-provider";
+import { TelegramProvider } from "@/context/telegram-context";
 
 const inter = Inter({ subsets: ["latin"] });
 const generalSans = local({
@@ -32,7 +34,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${generalSans.variable} ${inter.className}`}>{children}</body>
+      <body className={`${generalSans.variable} ${inter.className}`}>
+        <ReactQueryProvider>
+          <TelegramProvider>{children}</TelegramProvider>
+        </ReactQueryProvider>
+      </body>
     </html>
   );
 }

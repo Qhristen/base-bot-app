@@ -1,5 +1,11 @@
+"use client";
+
+
 import { ArcticonsCoinGold, LightBolt } from "@/assets/icons";
+import { TelegramContext } from "@/context/telegram-context";
+import useUser from "@/hooks/useUser";
 import Image from "next/image";
+import { useContext } from "react";
 import Container from "../container";
 import { Button } from "../ui/Button";
 import {
@@ -12,15 +18,18 @@ import {
 } from "../ui/Dialog";
 
 const Boost = () => {
-  // const { user, webApp } = useContext(TelegramContext);
-  // console.log(user, "user");
+  const { user } = useContext(TelegramContext);
+ 
+  const userID = user?.id
+  const { data, isPending: isUserPending } = useUser(String(userID));
+
   return (
     <Container>
       {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
       <div className="flex w-full h-full flex-col justify-between p-5 mb-40">
         <div className="flex flex-col items-center justify-center mt-10">
           <div className="text-gray-light">Your coins</div>
-          <h1 className="text-4xl font-black text-white">2521</h1>
+          <h1 className="text-4xl font-black text-white">{data?.points}</h1>
         </div>
 
         <div className="mt-10">

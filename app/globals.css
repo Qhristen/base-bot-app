@@ -19,6 +19,14 @@
 
 }
 
+@media (min-width: 1024px) {
+  :root {
+    --from-width: 20vw;
+    --to-width-20: 20.5vw;
+    --to-width-50: 25vw;
+  }
+}
+
 
 body {
   color: rgb(var(--foreground-rgb));

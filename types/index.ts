@@ -9,6 +9,7 @@ export interface ITelegramUser {
 export interface IWebApp {
   initData: string;
   sendData: (data: any) => void;
+  showAlert: (data: any) => void;
   expand: () => void;
   initDataUnsafe: {
     query_id: string;
@@ -46,4 +47,37 @@ export interface IWebApp {
     isActive: boolean;
   };
   HapticFeedback: any;
+}
+
+export interface TaskType {
+  id:         string;
+  created_at: Date;
+  updated_at: Date;
+  name:       string;
+  point:      number;
+  activities: string[];
+  type:       string;
+}
+
+export interface User {
+  id:               string;
+  created_at:       Date;
+  updated_at:       Date;
+  full_name:        string;
+  telegramUserId:   string;
+  telegramUserName: string;
+  referralLink:     string;
+  referredBy:       null;
+  points:           number;
+  referalPoints:    number;
+  socialPoints:     number;
+  friendsReferred:  number;
+  lastInteraction:  Date;
+  league:           string;
+}
+
+export interface TouchPoint {
+  id: number;
+  clientX: number;
+  clientY: number;
 }

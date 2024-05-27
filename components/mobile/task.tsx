@@ -1,7 +1,6 @@
-import {
-  ArcticonsCoin,
-  ArrowRight
-} from "@/assets/icons";
+"use client";
+
+import { ArcticonsCoin, ArrowRight } from "@/assets/icons";
 import { NoviceBadge } from "@/assets/images";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,10 +8,48 @@ import Container from "../container";
 import { Button } from "../ui/Button";
 import { Progress } from "../ui/ProgressBar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/Tab";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { TaskType } from "@/types";
+import { TelegramContext } from "@/context/telegram-context";
+import useUser from "@/hooks/useUser";
+import { useContext, useEffect } from "react";
 
 const Task = () => {
-  // const { user, webApp } = useContext(TelegramContext);
-  // console.log(user, "user");
+  const { user } = useContext(TelegramContext);
+  const userID = user?.id
+  const {data: userData} = useUser(String(userID))
+
+  const {
+    isPending,
+    error,
+    data: specialTask,
+  } = useQuery({
+    queryKey: ["specialTask"],
+    queryFn: () =>
+      axios
+        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/task/special/all`)
+        .then((response) => response.data?.data?.task as TaskType[]),
+  });
+
+  const { data: leagueTask } = useQuery({
+    queryKey: ["league"],
+    queryFn: () =>
+      axios
+        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/task/league/all`)
+        .then((response) => response.data?.data?.task as TaskType[]),
+  });
+
+  const { data: refTask } = useQuery({
+    queryKey: ["ref"],
+    queryFn: () =>
+      axios
+        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/task/ref/all`)
+        .then((response) => response.data?.data?.task as TaskType[]),
+  });
+
+  if (isPending) return "loading...";
+
   return (
     <Container>
       {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
@@ -20,7 +57,7 @@ const Task = () => {
         <div className="flex items-center justify-between">
           <div className="flex flex-col items-start justify-start">
             <div className="text-gray-light">Your coins</div>
-            <h1 className="text-2xl font-black text-white">2521</h1>
+              <h1 className="text-2xl font-black text-white">{userData?.points}</h1>
           </div>
 
           <Link href={`/badges`}>
@@ -28,11 +65,10 @@ const Task = () => {
               <div className="w-4 h-4">
                 <Image src={NoviceBadge} alt="novice" />
               </div>
-              <h2 className="text-white">Novice</h2>
+              <h2 className="text-white">{userData?.league}</h2>
             </div>
           </Link>
         </div>
-
         <Tabs defaultValue="special" className="w-full mt-10">
           <TabsList className="flex itens justify-between mb-5">
             <TabsTrigger value="special">Special</TabsTrigger>
@@ -41,18 +77,16 @@ const Task = () => {
           </TabsList>
           <TabsContent value="special">
             <div className="bg-gray rounded-2xl p-3">
-              {Array.from({ length: 3 }).map((data, i) => (
+              {specialTask?.map((data, i) => (
                 <Link key={i} href={`/single-task`}>
                   <div className="flex items-center justify-between my-5">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-gray"></div>
                       <div className="text-white">
-                        <h4 className="font-medium text-white">
-                          Join Our Socials
-                        </h4>
+                        <h4 className="font-medium text-white">{data?.name}</h4>
                         <div className="flex items-center gap-2 font-bold text-white">
                           <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
-                          <span>200 000</span>
+                          <span>{data.point}</span>
                         </div>
                       </div>
                     </div>
@@ -64,16 +98,16 @@ const Task = () => {
           </TabsContent>
           <TabsContent value="leagues">
             <div className="bg-gray rounded-2xl p-3">
-              {Array.from({ length: 3 }).map((data, i) => (
+              {leagueTask?.map((data, i) => (
                 <div key={i} className="my-5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-gray"></div>
                       <div className="text-white">
-                        <h4 className="font-medium text-white">Bonze</h4>
+                        <h4 className="font-medium text-white">{data.name}</h4>
                         <div className="flex items-center gap-2 font-bold text-white">
                           <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
-                          <span>1 000</span>
+                          <span>{data?.point}</span>
                         </div>
                       </div>
                     </div>
@@ -88,16 +122,16 @@ const Task = () => {
           </TabsContent>
           <TabsContent value="ref">
             <div className="bg-gray rounded-2xl p-3">
-              {Array.from({ length: 5 }).map((data, i) => (
+              {refTask?.map((data, i) => (
                 <div key={i} className="my-5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-gray"></div>
                       <div className="text-white">
-                        <h4 className="font-medium text-white">Bonze</h4>
+                        <h4 className="font-medium text-white">{data.name}</h4>
                         <div className="flex items-center gap-2 font-bold text-white">
                           <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
-                          <span>1 000</span>
+                          <span>{data.point}</span>
                         </div>
                       </div>
                     </div>

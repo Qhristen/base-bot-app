@@ -22,9 +22,6 @@ const Welcome = () => {
         {user ? (
           <div
             className="flex justify-center"
-            onClick={async () => {
-              webApp?.sendData(JSON.stringify({ data: "test" }));
-            }}
           >
             <div className="flex gap-2 items-center w-max justify-center border-2 border-white rounded-2xl p-3">
               <TableUserFiled />
