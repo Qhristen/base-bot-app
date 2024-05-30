@@ -10,37 +10,38 @@ const config: Config = {
     extend: {
       keyframes: {
         widthChange: {
-          '0%, 100%': {
-            width: 'var(--from-width)',
+          "0%, 100%": {
+            width: "var(--from-width)",
           },
-          '20%': {
-            width: 'var(--to-width-20)',
+          "20%": {
+            width: "var(--to-width-20)",
           },
-          '50%': {
-            width: 'var(--to-width-50)',
+          "50%": {
+            width: "var(--to-width-50)",
           },
         },
         floatUpAndFadeOut: {
-          '0%': { transform: 'translateY(0)', opacity: '1' },
-          '100%': { transform: 'translateY(-100px)', opacity: '0' },
+          "0%": { transform: "translateY(0)", opacity: "1" },
+          "100%": { transform: "translateY(-100px)", opacity: "0" },
         },
       },
       animation: {
-        floatUpAndFadeOut: 'floatUpAndFadeOut 1s ease forwards',
-        widthChange: 'widthChange 0.1s ease-in-out',
+        floatUpAndFadeOut: "floatUpAndFadeOut 1s ease forwards",
+        widthChange: "widthChange 0.1s ease-in-out",
+        "spin-slow": "spin 2s linear infinite",
       },
       colors: {
-        "primary": "var(--primary)",
-        "black": "var(--background)",
-        "gray": "var(--gray)",
+        primary: "var(--primary)",
+        black: "var(--background)",
+        gray: "var(--gray)",
         "gray-light": "var(--gray-light)",
-        "yellow": "var(--yellow)",
-        "overlay": "var(--overlay)",
-        "destructive": "var(--destructive)",
+        yellow: "var(--yellow)",
+        overlay: "var(--overlay)",
+        destructive: "var(--destructive)",
         "destructive-foreground": "var(--destructive-foreground)",
-        "green": "var(--green)",
+        green: "var(--green)",
         "green-foreground": "var(--green-foreground)",
-      }
+      },
     },
   },
   plugins: [],
