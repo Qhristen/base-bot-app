@@ -11,6 +11,7 @@ import { SpecialTask, TaskType } from "@/types";
 import { useRouter } from "next/navigation";
 import { useSubmitSpecialTask } from "@/hooks/useSubmitTask";
 import { TelegramContext } from "@/context/telegram-context";
+import CircularProgressBar from "../CircularProgressBar";
 
 interface ITask {
   taskId: string;
@@ -28,6 +29,16 @@ const TaskDetails = ({ taskId }: ITask) => {
   });
 
   const submitSpecialTask = useSubmitSpecialTask();
+
+  if (isPending)
+    return (
+      <CircularProgressBar
+        percentage={10}
+        size={80}
+        strokeWidth={12}
+        color="white"
+      />
+    );
 
   return (
     <Container>
