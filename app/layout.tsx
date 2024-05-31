@@ -4,6 +4,7 @@ import local from "next/font/local";
 import "./globals.css";
 import ReactQueryProvider from "@/context/react-query-provider";
 import { TelegramProvider } from "@/context/telegram-context";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 const generalSans = local({
@@ -35,9 +36,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${generalSans.variable} ${inter.className}`}>
-        <ReactQueryProvider>
-          <TelegramProvider>{children}</TelegramProvider>
-        </ReactQueryProvider>
+        <TelegramProvider>
+          <ReactQueryProvider>
+            {children}
+            <Toaster />
+          </ReactQueryProvider>
+        </TelegramProvider>
       </body>
     </html>
   );

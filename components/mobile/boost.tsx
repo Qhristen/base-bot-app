@@ -1,9 +1,7 @@
 "use client";
 
-
 import { ArcticonsCoinGold, LightBolt } from "@/assets/icons";
 import { TelegramContext } from "@/context/telegram-context";
-import useUser from "@/hooks/useUser";
 import Image from "next/image";
 import { useContext } from "react";
 import Container from "../container";
@@ -16,26 +14,60 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/Dialog";
+import { useUser } from "@/hooks/useUser";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { IBoost } from "@/types";
+import CircularProgressBar from "../CircularProgressBar";
 
 const Boost = () => {
   const { user } = useContext(TelegramContext);
- 
-  const userID = user?.id
-  const { data, isPending: isUserPending } = useUser(String(userID));
 
+  const userID = user?.id;
+  const { userData, loading: isUserPending } = useUser(String(userID));
+
+  const {
+    isPending,
+    error,
+    data: activeBoost,
+  } = useQuery({
+    queryKey: ["daily"],
+    queryFn: () =>
+      axios
+        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/boost/active/all`)
+        .then((response) => response.data?.data?.boost as IBoost[]),
+  });
+
+  const { data: otherBoost } = useQuery({
+    queryKey: ["other"],
+    queryFn: () =>
+      axios
+        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/boost/other/all`)
+        .then((response) => response.data?.data?.boost as IBoost[]),
+  });
+
+  if (isPending || isUserPending)
+    return (
+      <CircularProgressBar
+        percentage={10}
+        size={80}
+        strokeWidth={12}
+        color="white"
+      />
+    );
   return (
     <Container>
       {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
       <div className="flex w-full h-full flex-col justify-between p-5 mb-40">
         <div className="flex flex-col items-center justify-center mt-10">
           <div className="text-gray-light">Your coins</div>
-          <h1 className="text-4xl font-black text-white">{data?.points}</h1>
+          <h1 className="text-4xl font-black text-white">{userData?.points}</h1>
         </div>
 
         <div className="mt-10">
-          <h5 className="font-medium text-white py-2">Active bonus</h5>
+          <h5 className="font-medium text-white py-2">Daily bonus</h5>
           <div className="bg-gray rounded-2xl p-3">
-            {Array.from({ length: 3 }).map((data, i) => (
+            {activeBoost?.map((data, i) => (
               <div key={i} className="my-5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -43,11 +75,11 @@ const Boost = () => {
                       <Image src={LightBolt} alt="LightBolt" />
                     </div>
                     <div className="text-white">
-                      <h4 className="font-medium text-white">
-                        Full energy bar
-                      </h4>
+                      <h4 className="font-medium text-white">{data.name}</h4>
                       <div className="flex items-center gap-2 font-normal text-white">
-                        <span>3/3</span>
+                        <span>
+                          {data.limit}/{data.max}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -63,7 +95,7 @@ const Boost = () => {
         <div className="mt-10">
           <h5 className="font-medium text-white py-2">Other bonus</h5>
           <div className="bg-gray rounded-2xl p-3">
-            {Array.from({ length: 3 }).map((data, i) => (
+            {otherBoost?.map((data, i) => (
               <div key={i} className="my-5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -71,11 +103,12 @@ const Boost = () => {
                       <Image src={LightBolt} alt="LightBolt" />
                     </div>
                     <div className="text-white">
-                      <h4 className="font-medium text-white">
-                        Full energy bar
-                      </h4>
+                      <h4 className="font-medium text-white">{data?.name}</h4>
                       <div className="flex items-center gap-2 font-normal text-white">
-                        <span>3/3</span>
+                        <div className="flex items-center gap-0 text-white">
+                          <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
+                          <span>{data.point}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -85,7 +118,7 @@ const Boost = () => {
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Multitap</DialogTitle>
+                        <DialogTitle>{data.name}</DialogTitle>
                         <div className="flex items-center justify-center py-4">
                           <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
                             <Image src={LightBolt} alt="LightBolt" />
@@ -95,7 +128,7 @@ const Boost = () => {
                           <div className="flex items-center justify-center gap-2">
                             <div className="flex items-center gap-0 text-white">
                               <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                              <span>500</span> 
+                              <span>{data.point}</span>
                             </div>
                             <div className="flex items-center gap-0">
                               <div className="flex items-center justify-center w-4 h-4 rounded-full p-0.5 bg-white text-black">

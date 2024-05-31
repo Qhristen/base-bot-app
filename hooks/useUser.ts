@@ -1,21 +1,24 @@
 import { User } from "@/types";
-import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 
-const fetchUser = async (userId: string): Promise<User> => {
-  const req = await axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${userId}`
-  );
-  const res = (await req.data.data.user) as User;
-  return res;
-};
+export function useUser(userId: string) {
+  const [userData, setUserData] = useState<User>();
+  const [loading, setLoading] = useState<boolean>(false);
 
-const useUser = (userId: string) => {
-  return useQuery<User>({
-    queryKey: ["user"],
-    queryFn: async () => await fetchUser(userId),
-    retry: true
-  });
-};
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const req = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${userId}`
+        );
+        const res = (await req.data.data.user) as User;
+        setUserData(res);
+        setLoading(false);
+      } catch (error) {}
+    })();
+  }, [userId]);
 
-export default useUser;
+  return { userData, loading };
+}

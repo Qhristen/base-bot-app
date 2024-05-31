@@ -3,37 +3,52 @@
 import { BaseLogoSm, LightBolt } from "@/assets/icons";
 import { NoviceBadge } from "@/assets/images";
 import { TelegramContext } from "@/context/telegram-context";
-import useUser from "@/hooks/useUser";
+
+import { TouchPoint, User } from "@/types";
 import axios from "axios";
 import Image from "next/image";
-import { useContext, useEffect, useState, useMemo, useCallback } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import Container from "../container";
 import { Progress } from "../ui/ProgressBar";
-import { TouchPoint } from "@/types";
-import { useRouter } from "next/navigation";
+import CircularProgressBar from "../CircularProgressBar";
 
 const Tap = () => {
   const { user, webApp } = useContext(TelegramContext);
-  const userID = user?.id;
-  const { data: userData, isPending } = useUser(String(userID));
-  const router = useRouter();
+  const userID = user && user?.id;
+  const [userData, setUserData] = useState<User>();
+  const [userLoading, setUserLoading] = useState<boolean>(false);
+  // const [audio] = useState(new Audio('https://assets.mixkit.co/active_storage/sfx/216/216.wav'));
 
   const [isPressed, setIsPressed] = useState(false);
   const [miningInfo, setMiningInfo] = useState({
     status: "idle",
-    perClick: 1,
-    limit: 2000,
-    max: 2000,
+    perClick: 0,
+    limit: 0,
+    max: 0,
   });
+
   const [textPoints, setTextPoints] = useState<TouchPoint[]>([]);
   const [pointCount, setPointCount] = useState(0);
+  const [counter, setCounter] = useState(0);
 
   useEffect(() => {
-    if (user && userData) {
-      setPointCount(userData?.points);
-    }
-    router.refresh();
-  }, [user, userData, router]);
+    setUserLoading(true);
+    (async () => {
+      const req = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${userID}`
+      );
+      const res = (await req.data.data.user) as User;
+      setUserData(res);
+      setPointCount(res.points);
+      setMiningInfo({
+        status: "mining",
+        perClick: res?.perclick,
+        limit: res?.limit,
+        max: res?.max,
+      });
+      setUserLoading(false);
+    })();
+  }, [user]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -48,23 +63,23 @@ const Tap = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [miningInfo]);
 
   const updateScore = useCallback(async () => {
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${user?.id}/add-point`,
-        { point: miningInfo.perClick }
+        { point: counter }
       );
       console.log("Score was updated:", response.data);
     } catch (error) {
       console.error("Error updating score:", error);
     }
-  }, [user?.id, miningInfo.perClick]);
+  }, [user?.id, counter]);
 
   useEffect(() => {
     updateScore();
-  }, [pointCount, updateScore]);
+  }, [pointCount]);
 
   const handleCoinTap = useCallback(
     (event: React.TouchEvent<HTMLImageElement>) => {
@@ -72,14 +87,15 @@ const Tap = () => {
       if (miningInfo.limit !== 0) {
         setIsPressed(true);
         setPointCount((prev) => prev + miningInfo.perClick);
+        setCounter((prev) => prev + miningInfo.perClick);
         setMiningInfo((prevMiningInfo) => ({
           ...prevMiningInfo,
           limit: prevMiningInfo.limit - prevMiningInfo.perClick,
           status: "mining",
         }));
-
+        // audio.play();
         const touchPoints = Array.from(event.touches)
-          .slice(0, 5)
+          .slice(0, userData?.multiTap)
           .map((touch, index) => ({
             id: index,
             identifier: touch.identifier,
@@ -96,7 +112,7 @@ const Tap = () => {
           ...prevMiningInfo,
           status: "stop",
         }));
-        webApp?.showAlert("Mining limit reached. Please try again later.");
+        // webApp?.showAlert("Mining limit reached. Please try again later.");
       }
     },
     [miningInfo, webApp]
@@ -115,8 +131,15 @@ const Tap = () => {
     }deg) rotateY(${(textPoints[0]?.clientX - window.innerWidth / 2) / 20}deg)`;
   }, [isPressed, textPoints]);
 
-  if (isPending) return `loading...`;
-
+  if (userLoading)
+    return (
+      <CircularProgressBar
+        percentage={10}
+        size={80}
+        strokeWidth={12}
+        color="white"
+      />
+    );
   return (
     <Container>
       <div className="flex w-full h-full flex-col justify-between p-5 mb-40">
@@ -160,7 +183,7 @@ const Tap = () => {
               key={point.id}
               style={{
                 left: `${point.clientX - 50}px`,
-                top: `${point.clientY - 200}px`,
+                top: `${point.clientY - 240}px`,
               }}
               className="absolute animate-floatUpAndFadeOut text-4xl text-white font-bold"
               onAnimationEnd={() => removePoint(point.id)}

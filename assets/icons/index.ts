@@ -15,3 +15,7 @@ export { default as LogoIcon } from "./logoicon.png";
 export { default as TwitterIcon } from "./mdi_twitter.svg";
 export { default as TelegramIcon } from "./ic_baseline-telegram.svg";
 export { default as BaseLogoSm } from "./baselogo.png";
+export { default as OnePerson } from "./oneperson.png";
+export { default as TwoPeople } from "./twoppl.png";
+export { default as ThreePeople } from "./threeppl.png";
+export { default as SpecialTaskIcon } from "./specialTask.png";
