@@ -8,8 +8,16 @@ import {
   ThreePeople,
   TwoPeople,
 } from "@/assets/icons";
-import { NoviceBadge } from "@/assets/images";
-import Image from "next/image";
+import {
+  AdvanceBadge,
+  ExpertBadge,
+  LegendBadge,
+  MasterBadge,
+  NoviceBadge,
+  RookieBadge,
+  SeniorBadge,
+} from "@/assets/images";
+import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import Container from "../container";
 import { Button } from "../ui/Button";
@@ -58,6 +66,20 @@ const Task = () => {
         .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/task/ref`)
         .then((response) => response.data?.data?.task as Ref_Task[]),
   });
+
+  const LeagueBadges: Record<string, string> = {
+    novice: `/badges/novice.png`,
+    rookie: `/badges/RookieBadge.png`,
+    senior: `/badges/SeniorBadge.png`,
+    advanced: `/badges/AdvancedBadge.png`,
+    expert: `/badges/ExpertBadge.png`,
+    master: `/badges/MasterBadge.png`,
+    legend: `/badges/LegendBadge.png`,
+  };
+
+  const getImageForUserLevel = (userLevel: string): string => {
+    return LeagueBadges[userLevel] || LeagueBadges.novice;
+  };
 
   if (isPending || userLoading || isLeagueloading || isRefLoading)
     return (
@@ -121,41 +143,50 @@ const Task = () => {
           </TabsContent>
           <TabsContent value="leagues">
             <div className="bg-gray rounded-2xl p-3">
-              {leagueTask?.map((data, i) => (
-                <div key={i} className="my-5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gray"></div>
-                      <div className="text-white">
-                        <h4 className="font-medium text-white">{data.name}</h4>
-                        <div className="flex items-center gap-2 font-bold text-white">
-                          <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
-                          <span>{data?.point}</span>
+              {leagueTask?.map((data, i) => {
+                const LeagueImage = getImageForUserLevel(
+                  `${data.name.toLowerCase()}`
+                );
+                return (
+                  <div key={i} className="my-5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
+                          <Image src={LeagueImage} alt="user" />
+                        </div>
+                        <div className="text-white">
+                          <h4 className="font-medium text-white">
+                            {data.name}
+                          </h4>
+                          <div className="flex items-center gap-2 font-bold text-white">
+                            <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
+                            <span>{data?.point}</span>
+                          </div>
                         </div>
                       </div>
+                      <Button
+                        onClick={async (event) => {
+                          event.preventDefault();
+                          await submitLeagueTaskMutation.mutate({
+                            name: data.name,
+                            taskId: data?.id,
+                            userId: String(user?.id),
+                            status: "completed",
+                            point: data?.point,
+                            type: "league",
+                          });
+                        }}
+                        disabled={userData?.league === data.name ? false : true}
+                        size={`sm`}
+                        variant={`primary`}
+                      >
+                        Claim
+                      </Button>
                     </div>
-                    <Button
-                      onClick={async (event) => {
-                        event.preventDefault();
-                        await submitLeagueTaskMutation.mutate({
-                          name: data.name,
-                          taskId: data?.id,
-                          userId: String(user?.id),
-                          status: "completed",
-                          point: data?.point,
-                          type: "league",
-                        });
-                      }}
-                      disabled={userData?.league === data.name ? false : true}
-                      size={`sm`}
-                      variant={`primary`}
-                    >
-                      Claim
-                    </Button>
+                    <Progress className="my-2" value={30} />
                   </div>
-                  <Progress className="my-2" value={30} />
-                </div>
-              ))}
+                );
+              })}
             </div>
           </TabsContent>
           <TabsContent value="ref">
