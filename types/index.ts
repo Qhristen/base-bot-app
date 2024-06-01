@@ -87,12 +87,10 @@ export interface League_Task {
   point:      number;
 }
 
-
 export interface Activity {
   link: string;
   name: string;
 }
-
 
 export interface User {
   id:               string;
@@ -111,12 +109,18 @@ export interface User {
   limit:            number;
   touches:          number;
   max:              number;
+  fullEnergy:       FullEnergy;
   multiTap:         number;
-  fullEnergy:       boolean;
-  tapGuru:          boolean;
+  tapGuru:          FullEnergy;
   friendsReferred:  number;
   lastInteraction:  Date;
   league:           string;
+}
+
+export interface FullEnergy {
+  active: boolean;
+  max:    number;
+  min:    number;
 }
 
 

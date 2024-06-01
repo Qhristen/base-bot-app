@@ -2,8 +2,10 @@
 
 import { ArcticonsCoinGold, LightBolt } from "@/assets/icons";
 import { TelegramContext } from "@/context/telegram-context";
+import { useUser } from "@/hooks/useUser";
 import Image from "next/image";
 import { useContext } from "react";
+import CircularProgressBar from "../CircularProgressBar";
 import Container from "../container";
 import { Button } from "../ui/Button";
 import {
@@ -14,11 +16,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/Dialog";
-import { useUser } from "@/hooks/useUser";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { IBoost } from "@/types";
-import CircularProgressBar from "../CircularProgressBar";
 
 const Boost = () => {
   const { user } = useContext(TelegramContext);
@@ -26,27 +23,7 @@ const Boost = () => {
   const userID = user?.id;
   const { userData, loading: isUserPending } = useUser(String(userID));
 
-  const {
-    isPending,
-    error,
-    data: activeBoost,
-  } = useQuery({
-    queryKey: ["daily"],
-    queryFn: () =>
-      axios
-        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/boost/active/all`)
-        .then((response) => response.data?.data?.boost as IBoost[]),
-  });
-
-  const { data: otherBoost } = useQuery({
-    queryKey: ["other"],
-    queryFn: () =>
-      axios
-        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/boost/other/all`)
-        .then((response) => response.data?.data?.boost as IBoost[]),
-  });
-
-  if (isPending || isUserPending)
+  if (isUserPending)
     return (
       <CircularProgressBar
         percentage={10}
@@ -55,6 +32,7 @@ const Boost = () => {
         color="white"
       />
     );
+
   return (
     <Container>
       {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
@@ -67,94 +45,129 @@ const Boost = () => {
         <div className="mt-10">
           <h5 className="font-medium text-white py-2">Daily bonus</h5>
           <div className="bg-gray rounded-2xl p-3">
-            {activeBoost?.map((data, i) => (
-              <div key={i} className="my-5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
-                      <Image src={LightBolt} alt="LightBolt" />
-                    </div>
-                    <div className="text-white">
-                      <h4 className="font-medium text-white">{data.name}</h4>
-                      <div className="flex items-center gap-2 font-normal text-white">
-                        <span>
-                          {data.limit}/{data.max}
-                        </span>
-                      </div>
+            <div className="my-5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
+                    <Image src={LightBolt} alt="LightBolt" />
+                  </div>
+                  <div className="text-white">
+                    <h4 className="font-medium text-white">Full energy bar</h4>
+                    <div className="flex items-center gap-2 font-normal text-white">
+                      <span>
+                        {userData?.fullEnergy.min}/{userData?.fullEnergy.max}
+                      </span>
                     </div>
                   </div>
-                  <Button size={`sm`} variant={`primary`}>
-                    Use
-                  </Button>
                 </div>
+                <Dialog>
+                  <DialogTrigger className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
+                    Use
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Full energy bar</DialogTitle>
+                    </DialogHeader>
+                    <DialogDescription className="font-thin text-center">
+                      Increase amount of TAP you can earn per one tap +1 per tap
+                      for each level.
+                    </DialogDescription>
+                  </DialogContent>
+                </Dialog>
               </div>
-            ))}
+            </div>
+            <div className="my-5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
+                    <ArcticonsCoinGold className="fill-yellow stroke-white" />
+                  </div>
+                  <div className="text-white">
+                    <h4 className="font-medium text-white">Taping Guru</h4>
+                    <div className="flex items-center gap-2 font-normal text-white">
+                      <span>
+                        {userData?.tapGuru.min}/{userData?.tapGuru.max}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <Dialog>
+                  <DialogTrigger className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
+                    Use
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Taping Guru</DialogTitle>
+                    </DialogHeader>
+                    <DialogDescription className="font-thin text-center">
+                      Increase amount of TAP you can earn per one tap +1 per tap
+                      for each level.
+                    </DialogDescription>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
           </div>
         </div>
 
         <div className="mt-10">
           <h5 className="font-medium text-white py-2">Other bonus</h5>
           <div className="bg-gray rounded-2xl p-3">
-            {otherBoost?.map((data, i) => (
-              <div key={i} className="my-5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
-                      <Image src={LightBolt} alt="LightBolt" />
-                    </div>
-                    <div className="text-white">
-                      <h4 className="font-medium text-white">{data?.name}</h4>
-                      <div className="flex items-center gap-2 font-normal text-white">
-                        <div className="flex items-center gap-0 text-white">
-                          <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                          <span>{data.point}</span>
-                        </div>
+            <div className="my-5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
+                    <Image src={LightBolt} alt="LightBolt" />
+                  </div>
+                  <div className="text-white">
+                    <h4 className="font-medium text-white">Multi tap</h4>
+                    <div className="flex items-center gap-2 font-normal text-white">
+                      <div className="flex items-center gap-0 text-white">
+                        <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
+                        <span>500</span>
                       </div>
                     </div>
                   </div>
-                  <Dialog>
-                    <DialogTrigger className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
-                      Open
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>{data.name}</DialogTitle>
-                        <div className="flex items-center justify-center py-4">
-                          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
-                            <Image src={LightBolt} alt="LightBolt" />
-                          </div>
-                        </div>
-                        <div className="font-thin text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            <div className="flex items-center gap-0 text-white">
-                              <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                              <span>{data.point}</span>
-                            </div>
-                            <div className="flex items-center gap-0">
-                              <div className="flex items-center justify-center w-4 h-4 rounded-full p-0.5 bg-white text-black">
-                                1
-                              </div>
-                              <span>Level</span>
-                            </div>
-                          </div>
-                        </div>
-                        <DialogDescription className="font-thin text-center">
-                          Increase amount of TAP you can earn per one tap +1 per
-                          tap for each level.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <Button
-                        className="w-full"
-                        variant={`primary`}
-                        size={`lg`}
-                      >
-                        Purchase
-                      </Button>
-                    </DialogContent>
-                  </Dialog>
                 </div>
+                <Dialog>
+                  <DialogTrigger className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
+                    Open
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Multi tap</DialogTitle>
+                      <div className="flex items-center justify-center py-4">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
+                          <Image src={LightBolt} alt="LightBolt" />
+                        </div>
+                      </div>
+                      <div className="font-thin text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="flex items-center gap-0 text-white">
+                            <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
+                            <span>500</span>
+                          </div>
+                          <div className="flex items-center gap-0">
+                            <div className="flex items-center justify-center w-4 h-4 rounded-full p-0.5 bg-white text-black">
+                              1
+                            </div>
+                            <span>Level</span>
+                          </div>
+                        </div>
+                      </div>
+                      <DialogDescription className="font-thin text-center">
+                        Increase amount of TAP you can earn per one tap +1 per
+                        tap for each level.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <Button className="w-full" variant={`primary`} size={`lg`}>
+                      Purchase
+                    </Button>
+                  </DialogContent>
+                </Dialog>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>

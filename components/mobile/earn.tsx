@@ -7,17 +7,17 @@ import {
   ShareIcon,
   SpecialTaskIcon,
 } from "@/assets/icons";
-import { TaskType } from "@/types";
+import { TelegramContext } from "@/context/telegram-context";
+import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/hooks/useUser";
+import { SpecialTask } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import Container from "../container";
 import { useContext } from "react";
-import { TelegramContext } from "@/context/telegram-context";
-import { useUser } from "@/hooks/useUser";
-import Notification from "../notification";
-import { useToast } from "@/hooks/use-toast";
+import CircularProgressBar from "../CircularProgressBar";
+import Container from "../container";
 
 const Earn = () => {
   const { user, webApp } = useContext(TelegramContext);
@@ -25,18 +25,29 @@ const Earn = () => {
   const { userData, loading: isUserPending } = useUser(String(userID));
   const { toast } = useToast();
 
-  const { data: specialTask } = useQuery({
+  const { data: specialTask, isPending: isSpecialTaskPending } = useQuery({
     queryKey: ["specialTask"],
     queryFn: () =>
       axios
-        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/task/special/all`)
-        .then((response) => response.data?.data?.task as TaskType[]),
+        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/task/special`)
+        .then((response) => response.data?.data?.task as SpecialTask[]),
   });
 
   const onCopy = (data: string) => {
     navigator.clipboard.writeText(data);
     toast({description: "Referral link copied." });
   };
+
+
+  if (isUserPending || isSpecialTaskPending)
+    return (
+      <CircularProgressBar
+        percentage={10}
+        size={80}
+        strokeWidth={12}
+        color="white"
+      />
+    );
 
 
   return (
