@@ -58,13 +58,7 @@ const MovileBottomNav = () => {
                 "bg-gray px-4 py-2 w-full rounded-lg border-2 border-primary"
             )}
           >
-            <nav.icon
-              className={cn(
-                "fill-white",
-                pathname === nav.link &&
-                  "fill-primary"
-              )}
-            />
+            <nav.icon className={cn("fill-primary")} />
             <div className="text-white">{nav.title}</div>
           </div>
         </Link>
