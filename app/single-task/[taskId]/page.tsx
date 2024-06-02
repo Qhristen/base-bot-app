@@ -9,12 +9,12 @@ interface TaskPageProps {
 }
 
 export async function generateStaticParams() {
-  const posts = await axios
+  const specialTask = await axios
     .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/task/special`)
     .then((res) => res?.data?.data?.task as SpecialTask[]);
 
-  return posts.map((post) => ({
-    taskId: post.id,
+  return specialTask.map((task) => ({
+    taskId: task.id,
   }));
 }
 
