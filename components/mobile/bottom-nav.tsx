@@ -35,14 +35,14 @@ const bottomNavs: INav[] = [
     link: "/mobile/boost",
   },
   {
-    title: "Earn",
-    icon: MoneyBagIcon,
-    link: "/mobile/earn",
-  },
-  {
     title: "Stats",
     icon: IconStat,
     link: "/mobile/stats",
+  },
+  {
+    title: "Swap",
+    icon: MoneyBagIcon,
+    link: "/mobile/swap",
   },
 ];
 const MovileBottomNav = () => {

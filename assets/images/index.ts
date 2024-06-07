@@ -6,3 +6,6 @@ export { default as MasterBadge } from "./badges/MasterBadge.png";
 export { default as LegendBadge } from "./badges/LegendBadge.png";
 export { default as ExpertBadge } from "./badges/ExpertBadge.png";
 export { default as AdvanceBadge } from "./badges/AdvancedBadge.png";
+// export { default as JuniorBadge } from "./badges/JuniorBadge.png";
+// export { default as GenuisBadge } from "./badges/GeniusBadge.png";
+export { default as TapGuruImage } from "./tapguru.png";

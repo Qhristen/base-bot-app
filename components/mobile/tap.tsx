@@ -1,101 +1,99 @@
 "use client";
 
 import { BaseLogoSm, LightBolt } from "@/assets/icons";
-import { NoviceBadge } from "@/assets/images";
+import { TapGuruImage } from "@/assets/images";
 import { TelegramContext } from "@/context/telegram-context";
 
-import { TouchPoint, User } from "@/types";
-import axios from "axios";
+import { getTapGuru } from "@/redux/feature/boost";
+import {
+  addTextPoints,
+  fetchUser,
+  incrementMiningLimit,
+  incrementPoints,
+  removePoint,
+  setIsPressed,
+  updateLimit,
+  updateMiningInfo,
+  updateScore,
+  updateTapguru,
+} from "@/redux/feature/user";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { formatCompactNumber } from "@/utils/formatNumber";
 import Image from "next/image";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo } from "react";
+import CircularProgressBar from "../CircularProgressBar";
 import Container from "../container";
 import { Progress } from "../ui/ProgressBar";
-import CircularProgressBar from "../CircularProgressBar";
 
 const Tap = () => {
   const { user, webApp } = useContext(TelegramContext);
-  const userID = user && user?.id;
-  const [userData, setUserData] = useState<User>();
-  const [userLoading, setUserLoading] = useState<boolean>(false);
-  // const [audio] = useState(new Audio('https://assets.mixkit.co/active_storage/sfx/216/216.wav'));
-
-  const [isPressed, setIsPressed] = useState(false);
-  const [miningInfo, setMiningInfo] = useState({
-    status: "idle",
-    perClick: 0,
-    limit: 0,
-    max: 0,
-  });
-
-  const [textPoints, setTextPoints] = useState<TouchPoint[]>([]);
-  const [pointCount, setPointCount] = useState(0);
-  const [counter, setCounter] = useState(0);
+  const dispatch = useAppDispatch();
+  const {
+    miningInfo,
+    textPoints,
+    isPressed,
+    user: userData,
+    status,
+    pointCount,
+  } = useAppSelector((state) => state.user);
 
   useEffect(() => {
-    setUserLoading(true);
-    (async () => {
-      const req = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${userID}`
-      );
-      const res = (await req.data.data.user) as User;
-      setUserData(res);
-      setPointCount(res.points);
-      setMiningInfo({
-        status: "mining",
-        perClick: res?.perclick,
-        limit: res?.limit,
-        max: res?.max,
-      });
-      setUserLoading(false);
-    })();
-  }, [user]);
+    dispatch(fetchUser(String(user?.id)));
+  }, [dispatch, webApp, user]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setMiningInfo((prevMiningInfo) => {
-        if (prevMiningInfo.limit < prevMiningInfo.max) {
-          return { ...prevMiningInfo, limit: prevMiningInfo.limit + 1 };
-        } else {
-          clearInterval(interval);
-          return prevMiningInfo;
-        }
-      });
+      if (miningInfo.limit < miningInfo.max) {
+        dispatch(incrementMiningLimit(userData?.refillSpeed));
+      } else {
+        clearInterval(interval);
+      }
     }, 1000);
 
-    return () => clearInterval(interval);
-  }, [miningInfo]);
-
-  const updateScore = useCallback(async () => {
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${user?.id}/add-point`,
-        { point: counter }
+    return () => {
+      dispatch(
+        updateLimit({
+          max: Number(miningInfo?.max),
+          min: Number(miningInfo?.limit),
+          userId: String(user?.id),
+        })
       );
-      console.log("Score was updated:", response.data);
-    } catch (error) {
-      console.error("Error updating score:", error);
-    }
-  }, [user?.id, counter]);
+      clearInterval(interval);
+    };
+  }, [dispatch, miningInfo]);
 
-  useEffect(() => {
-    updateScore();
-  }, [pointCount]);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     if (userData && userData?.tapGuru.min !== 0) {
+  //       dispatch(updateTapguru());
+  //       // dispatch(
+  //       //   getTapGuru({
+  //       //     min: Number(userData?.tapGuru?.min && userData?.tapGuru?.min - 1),
+  //       //     max: Number(userData?.tapGuru?.max),
+  //       //     active: false,
+  //       //     userId: String(user?.id),
+  //       //   })
+  //       // );
+  //     } else {
+  //       clearInterval(interval);
+  //     }
+  //   }, 20000);
+
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, [dispatch]);
 
   const handleCoinTap = useCallback(
     (event: React.TouchEvent<HTMLImageElement>) => {
       event.preventDefault();
       if (miningInfo.limit !== 0) {
-        setIsPressed(true);
-        setPointCount((prev) => prev + miningInfo.perClick);
-        setCounter((prev) => prev + miningInfo.perClick);
-        setMiningInfo((prevMiningInfo) => ({
-          ...prevMiningInfo,
-          limit: prevMiningInfo.limit - prevMiningInfo.perClick,
-          status: "mining",
-        }));
+        dispatch(setIsPressed(true));
+
         // audio.play();
+
         const touchPoints = Array.from(event.touches)
-          .slice(0, userData?.multiTap)
+          .slice(0, 5)
           .map((touch, index) => ({
             id: index,
             identifier: touch.identifier,
@@ -103,26 +101,36 @@ const Tap = () => {
             clientY: touch.clientY,
           }));
 
-        setTextPoints((prevTouchPoints) => [
-          ...prevTouchPoints,
-          ...touchPoints,
-        ]);
+        dispatch(addTextPoints(touchPoints));
+        touchPoints.forEach((touch) => {
+          dispatch(
+            updateMiningInfo({
+              limit: miningInfo.limit - miningInfo.perClick,
+              status: "mining",
+            })
+          );
+          dispatch(incrementPoints(miningInfo.perClick));
+          dispatch(
+            updateScore({
+              userId: String(user?.id),
+              point: miningInfo.perClick,
+            })
+          );
+        });
       } else {
-        setMiningInfo((prevMiningInfo) => ({
-          ...prevMiningInfo,
-          status: "stop",
-        }));
+        dispatch(updateMiningInfo({ status: "stop" }));
         // webApp?.showAlert("Mining limit reached. Please try again later.");
       }
     },
-    [miningInfo, webApp]
+    [dispatch, miningInfo, userData]
   );
 
-  const removePoint = useCallback((id: number) => {
-    setTextPoints((prevTouchPoints) =>
-      prevTouchPoints.filter((point) => point.id !== id)
-    );
-  }, []);
+  const handleRemovePoint = useCallback(
+    (id: number) => {
+      dispatch(removePoint(id));
+    },
+    [dispatch]
+  );
 
   const transformStyle = useMemo(() => {
     if (!isPressed || !textPoints[0]) return "none";
@@ -131,7 +139,7 @@ const Tap = () => {
     }deg) rotateY(${(textPoints[0]?.clientX - window.innerWidth / 2) / 20}deg)`;
   }, [isPressed, textPoints]);
 
-  if (userLoading)
+  if (status === "loading")
     return (
       <CircularProgressBar
         percentage={10}
@@ -140,6 +148,7 @@ const Tap = () => {
         color="white"
       />
     );
+
   return (
     <Container>
       <div className="flex w-full h-full flex-col justify-between p-5 mb-40">
@@ -157,36 +166,44 @@ const Tap = () => {
               value={(miningInfo.limit / miningInfo.max) * 100}
             />
           </div>
-          <div className="flex items-center gap-2 bg-gray px-3 py-2 rounded-xl">
-            <div className="w-4 h-4">
-              <Image src={NoviceBadge} alt="novice" />
-            </div>
-            <h2 className="text-white select-none">{userData?.league}</h2>
+          <div className="flex items-center gap-2 border border-white px-3 py-2 rounded-xl">
+            {/* <div className="w-4 h-4">
+              <Image src={`${userLeagueImage}`} alt="novice" />
+            </div> */}
+            <h2 className="text-white select-none">Connect wallet</h2>
           </div>
         </div>
 
         <div className="flex flex-col items-center justify-center select-none mt-10">
-          <div className="text-gray-light">Your coins</div>
-          <h1 className="text-4xl font-black text-white">{pointCount}</h1>
+          <div className="text-gray-light">My points</div>
+          <h1 className="text-4xl font-black text-white">
+            {formatCompactNumber(pointCount)}
+          </h1>
         </div>
         <div className="relative flex items-center tabular-nums gap-0 justify-center mt-10 cursor-pointer overflow-hidden">
           <Image
             onTouchStart={handleCoinTap}
             onTouchEnd={() => setIsPressed(false)}
             alt="logo"
-            className="rounded-full"
+            className="rounded-full z-20"
             src={BaseLogoSm}
             style={{ transform: transformStyle }}
           />
+          {/* {userData?.tapGuru?.active && (
+            <div className="absolute z-10">
+              <Image alt="guru" className="" src={TapGuruImage} />
+            </div>
+          )} */}
           {textPoints.map((point) => (
             <div
               key={point.id}
               style={{
                 left: `${point.clientX - 50}px`,
                 top: `${point.clientY - 240}px`,
+                zIndex: 60,
               }}
               className="absolute animate-floatUpAndFadeOut text-4xl text-white font-bold"
-              onAnimationEnd={() => removePoint(point.id)}
+              onAnimationEnd={() => handleRemovePoint(point.id)}
             >
               +{miningInfo.perClick}
             </div>

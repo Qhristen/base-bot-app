@@ -1,10 +1,10 @@
-import Earn from "@/components/mobile/earn";
+import Swap from "@/components/mobile/swap";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <Earn />
+      <Swap />
     </div>
   );
 };

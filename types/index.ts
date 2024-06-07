@@ -36,8 +36,9 @@ export interface IWebApp {
   headerColor: string;
   backgroundColor: string;
   BackButton: {
-    isVisible: boolean;
+    show: ()=> void;
   };
+  openLink: (url: string)=> void
   MainButton: {
     text: string;
     color: string;
@@ -49,78 +50,94 @@ export interface IWebApp {
   HapticFeedback: any;
 }
 
-
 export interface TaskType {
-  id:         string;
+  id: string;
   created_at: Date;
   updated_at: Date;
-  name:       string;
-  point:      number;
+  name: string;
+  point: number;
   activities: Activity[] | null;
-  type:       string;
+  type: string;
 }
 
 export interface SpecialTask {
-  id:         string;
+  id: string;
   created_at: Date;
   updated_at: Date;
-  name:       string;
-  point:      number;
+  name: string;
+  point: number;
   activities: Activity[];
 }
 
 export interface Ref_Task {
-  id:          string;
-  created_at:  Date;
-  updated_at:  Date;
-  name:        string;
-  point:       number;
+  id: string;
+  created_at: Date;
+  updated_at: Date;
+  name: string;
+  point: number;
   totalInvite: number;
 }
 
-
 export interface League_Task {
-  id:         string;
+  id: string;
   created_at: Date;
   updated_at: Date;
-  name:       string;
-  point:      number;
+  name: string;
+  point: number;
 }
 
 export interface Activity {
+  id: string;
   link: string;
+  userId: string;
   name: string;
+  taskId: string;
+}
+
+export interface User_Activity {
+  id: string;
+  userId: string;
+  taskId: string;
+  activityId: string;
+  clicked: boolean;
 }
 
 export interface User {
-  id:               string;
-  created_at:       Date;
-  updated_at:       Date;
-  full_name:        string;
-  telegramUserId:   string;
+  id: string;
+  created_at: Date;
+  updated_at: Date;
+  full_name: string;
+  telegramUserId: string;
   telegramUserName: string;
-  referralLink:     string;
-  referredBy:       null;
-  points:           number;
-  referalPoints:    number;
-  socialPoints:     number;
-  status:           string;
-  perclick:         number;
-  limit:            number;
-  touches:          number;
-  max:              number;
-  fullEnergy:       FullEnergy;
-  multiTap:         number;
-  tapGuru:          FullEnergy;
-  friendsReferred:  number;
-  lastInteraction:  Date;
-  league:           string;
+  referralLink: string;
+  referredBy: null;
+  points: number;
+  referalPoints: number;
+  socialPoints: number;
+  status: string;
+  perclick: number;
+  totalPoint: number;
+  limit: number;
+  refillSpeed: number;
+  touches: number;
+  max: number;
+  fullEnergy: Response;
+  multiTap: number;
+  tapGuru: Response;
+  friendsReferred: number;
+  lastInteraction: Date;
+  league: string;
 }
 
-export interface FullEnergy {
+export interface Response {
   active: boolean;
-  max:    number;
-  min:    number;
+  max: number;
+  min: number;
+}
+
+export interface Badge {
+  name:   string;
+  points: number;
 }
 
 
@@ -131,20 +148,30 @@ export interface TouchPoint {
 }
 
 export interface IBoost {
-  id:         string;
+  id: string;
   created_at: Date;
   updated_at: Date;
-  name:       string;
-  limit:      number;
-  max:        number;
-  point:      number;
-  type:       string;
+  name: string;
+  limit: number;
+  max: number;
+  point: number;
+  type: string;
 }
 
 export interface IStats {
-  totalUsers:  number;
+  totalUsers: number;
   onlineUsers: number;
-  dailyUsers:  number;
+  dailyUsers: number;
   totalPoints: number;
   totalTouches: number;
+}
+
+
+export interface SubmitType {
+  name: string | undefined;
+  taskId: string | undefined;
+  userId: string | undefined;
+  status: string | undefined;
+  point: number | undefined;
+  type: string | undefined;
 }

@@ -3,85 +3,70 @@
 import {
   ArcticonsCoin,
   ArrowRight,
+  MoneyBagColoredIcon,
   OnePerson,
+  ShareIcon,
   SpecialTaskIcon,
   ThreePeople,
   TwoPeople,
 } from "@/assets/icons";
-import {
-  AdvanceBadge,
-  ExpertBadge,
-  LegendBadge,
-  MasterBadge,
-  NoviceBadge,
-  RookieBadge,
-  SeniorBadge,
-} from "@/assets/images";
-import Image, { StaticImageData } from "next/image";
+import { TelegramContext } from "@/context/telegram-context";
+import { useUser } from "@/hooks/useUser";
+import { League_Task, Ref_Task, SpecialTask } from "@/types";
+import { formatCompactNumber } from "@/utils/formatNumber";
+import { getImageForUserLevel } from "@/utils/userLevel";
+import axios from "axios";
+import Image from "next/image";
 import Link from "next/link";
+import { useContext, useEffect, useState } from "react";
+import CircularProgressBar from "../CircularProgressBar";
 import Container from "../container";
 import { Button } from "../ui/Button";
 import { Progress } from "../ui/ProgressBar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/Tab";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { League_Task, Ref_Task, SpecialTask, TaskType } from "@/types";
-import { TelegramContext } from "@/context/telegram-context";
-import { useContext, useEffect } from "react";
-import { useUser } from "@/hooks/useUser";
-import CircularProgressBar from "../CircularProgressBar";
-import { useSubmitRefTask, useSubmitLeagueTask } from "@/hooks/useSubmitTask";
+import { toast, useToast } from "@/hooks/use-toast";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import {
+  claimLeaguePoint,
+  claimRefPoint,
+  fetchLeagueTask,
+  fetchRefTask,
+  fetchSpecialTask,
+} from "@/redux/feature/task";
+import { fetchUser } from "@/redux/feature/user";
 
 const Task = () => {
-  const { user } = useContext(TelegramContext);
-  const userID = user?.id;
-  const { userData, loading: userLoading } = useUser(String(userID));
-  const submitRefTaskMutation = useSubmitRefTask();
-  const submitLeagueTaskMutation = useSubmitLeagueTask();
-
+  const { user, webApp } = useContext(TelegramContext);
+  const { toast } = useToast();
+  const dispatch = useAppDispatch();
+  const { leagueTask, refTask, specialTask, status } = useAppSelector(
+    (state) => state.task
+  );
   const {
-    isPending,
-    error,
-    data: specialTask,
-  } = useQuery({
-    queryKey: ["specialTask"],
-    queryFn: () =>
-      axios
-        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/task/special`)
-        .then((response) => response.data?.data?.task as SpecialTask[]),
-  });
+    user: userData,
+    status: userStatus,
+    badges,
+  } = useAppSelector((state) => state.user);
 
-  const { data: leagueTask, isPending: isLeagueloading } = useQuery({
-    queryKey: ["league"],
-    queryFn: () =>
-      axios
-        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/task/league`)
-        .then((response) => response.data?.data?.task as League_Task[]),
-  });
+  useEffect(() => {
+    dispatch(fetchUser(String(user?.id)));
+  }, [dispatch, webApp, user]);
 
-  const { data: refTask, isPending: isRefLoading } = useQuery({
-    queryKey: ["ref"],
-    queryFn: () =>
-      axios
-        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/task/ref`)
-        .then((response) => response.data?.data?.task as Ref_Task[]),
-  });
+  useEffect(() => {
+    dispatch(fetchRefTask());
+    dispatch(fetchLeagueTask());
+    dispatch(fetchSpecialTask());
+  }, [dispatch]);
 
-  const LeagueBadges: Record<string, string> = {
-    novice: `/badges/novice.png`,
-    rookie: `/badges/RookieBadge.png`,
-    senior: `/badges/SeniorBadge.png`,
-    advanced: `/badges/AdvancedBadge.png`,
-    expert: `/badges/ExpertBadge.png`,
-    master: `/badges/MasterBadge.png`,
-    legend: `/badges/LegendBadge.png`,
+  const userLeagueImage =
+    userData && getImageForUserLevel(`${userData?.league.toLowerCase()}`);
+
+  const onCopy = (data: string) => {
+    navigator.clipboard.writeText(data);
+    toast({ description: "Referral link copied." });
   };
 
-  const getImageForUserLevel = (userLevel: string): string => {
-    return LeagueBadges[userLevel] || LeagueBadges.novice;
-  };
-
-  if (isPending || userLoading || isLeagueloading || isRefLoading)
+  if (status === "loading" || userStatus === "loading")
     return (
       <CircularProgressBar
         percentage={10}
@@ -97,18 +82,18 @@ const Task = () => {
       <div className="flex w-full h-full flex-col justify-between p-5 mb-40">
         <div className="flex items-center justify-between">
           <div className="flex flex-col items-start justify-start">
-            <div className="text-gray-light">Your coins</div>
+            <div className="text-gray-light">My points</div>
             <h1 className="text-2xl font-black text-white">
-              {userData?.points}
+              {userData && formatCompactNumber(userData?.totalPoint)}
             </h1>
           </div>
 
           <Link href={`/badges`}>
             <div className="flex items-center gap-2 bg-gray px-3 py-2 rounded-xl">
               <div className="w-4 h-4">
-                <Image src={NoviceBadge} alt="novice" />
+                <Image src={`${userLeagueImage}`} alt="novice" />
               </div>
-              <h2 className="text-white">{userData?.league}</h2>
+              <h2 className="text-white capitalize">{userData?.league}</h2>
             </div>
           </Link>
         </div>
@@ -147,6 +132,9 @@ const Task = () => {
                 const LeagueImage = getImageForUserLevel(
                   `${data.name.toLowerCase()}`
                 );
+       
+                const progress =
+                  userData && ( userData?.totalPoint - data.point ) * 100;
                 return (
                   <div key={i} className="my-5">
                     <div className="flex items-center justify-between">
@@ -165,82 +153,145 @@ const Task = () => {
                         </div>
                       </div>
                       <Button
-                        onClick={async (event) => {
-                          event.preventDefault();
-                          await submitLeagueTaskMutation.mutate({
-                            name: data.name,
-                            taskId: data?.id,
-                            userId: String(user?.id),
-                            status: "completed",
-                            point: data?.point,
-                            type: "league",
-                          });
+                        onClick={() => {
+                          dispatch(
+                            claimLeaguePoint({
+                              name: data.name,
+                              taskId: data?.id,
+                              userId: String(user?.id),
+                              status: "completed",
+                              point: data?.point,
+                              type: "league",
+                            })
+                          );
                         }}
-                        disabled={userData?.league === data.name ? false : true}
+                        disabled={
+                          userData?.league.trim().toLowerCase() !==
+                          data.name.trim().toLowerCase()
+                            ? true
+                            : false
+                        }
                         size={`sm`}
                         variant={`primary`}
                       >
                         Claim
                       </Button>
                     </div>
-                    <Progress className="my-2" value={30} />
+                    <Progress className="my-2" value={Number(Math.min(Math.max(Number(progress), 0), 100).toFixed(2))} />
                   </div>
                 );
               })}
             </div>
           </TabsContent>
           <TabsContent value="ref">
+            <div
+              onClick={() => onCopy(userData?.referralLink as string)}
+              className="bg-gray rounded-2xl mb-4 p-4"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
+                    <MoneyBagColoredIcon className="scale-75" />
+                  </div>
+                  <div className="text-white">
+                    <h4 className="font-normal text-white">Invite bonus</h4>
+                    <div className="flex items-center gap-2 font-normal text-white">
+                      <span className="text-sm">
+                        Up to <span className="font-bold">30 000 </span>for a
+                        friend
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <ShareIcon />
+              </div>
+            </div>
+            <div
+              onClick={() => onCopy(userData?.referralLink as string)}
+              className="bg-gray rounded-2xl mb-4 p-4"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
+                    <MoneyBagColoredIcon className="scale-75" />
+                  </div>
+                  <div className="text-white">
+                    <h4 className="font-normal text-white">
+                      Invite a premium user
+                    </h4>
+                    <div className="flex items-center gap-2 font-normal text-white">
+                      <span className="text-sm">
+                        Up to <span className="font-bold">50 000 </span>for an
+                        invite
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <ShareIcon />
+              </div>
+            </div>
             <div className="bg-gray rounded-2xl p-3">
-              {refTask?.map((data, i) => (
-                <div key={i} className="my-5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
-                        <Image
-                          src={
-                            data.point <= 30000
-                              ? OnePerson
-                              : data.point <= 100000
-                              ? TwoPeople
-                              : ThreePeople
-                          }
-                          alt="user"
-                        />
-                      </div>
-                      <div className="text-white">
-                        <h4 className="font-medium text-white">{data.name}</h4>
-                        <div className="flex items-center gap-2 font-bold text-white">
-                          <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
-                          <span>{data.point}</span>
+              {refTask?.map((data, i) => {
+                const progress =
+                  userData &&
+                  (userData?.friendsReferred / data.totalInvite) * 100;
+                return (
+                  <div key={i} className="my-5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
+                          <Image
+                            src={
+                              data.point <= 30000
+                                ? OnePerson
+                                : data.point <= 100000
+                                ? TwoPeople
+                                : ThreePeople
+                            }
+                            alt="user"
+                          />
+                        </div>
+                        <div className="text-white">
+                          <h4 className="font-medium text-white">
+                            {data.name}
+                          </h4>
+                          <div className="flex items-center gap-2 font-bold text-white">
+                            <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
+                            <span>{data.point}</span>
+                          </div>
                         </div>
                       </div>
+                      <Button
+                        onClick={() => {
+                          dispatch(
+                            claimRefPoint({
+                              name: data.name,
+                              taskId: data?.id,
+                              userId: String(user?.id),
+                              status: "completed",
+                              point: data?.point,
+                              type: "ref",
+                            })
+                          );
+                        }}
+                        disabled={
+                          data.totalInvite === userData?.friendsReferred
+                            ? false
+                            : true
+                        }
+                        size={`sm`}
+                        variant={`primary`}
+                      >
+                        Claim
+                      </Button>
                     </div>
-                    <Button
-                      onClick={async (event) => {
-                        event.preventDefault();
-                        await submitRefTaskMutation.mutate({
-                          name: data.name,
-                          taskId: data?.id,
-                          userId: String(user?.id),
-                          status: "completed",
-                          point: data?.point,
-                          type: "ref",
-                        });
-                      }}
-                      disabled={
-                        data.totalInvite === userData?.friendsReferred
-                          ? false
-                          : true
-                      }
-                      size={`sm`}
-                      variant={`primary`}
-                    >
-                      Claim
-                    </Button>
+                    <Progress
+                      className="my-2"
+                      value={Number(progress?.toFixed(2))}
+                    />
                   </div>
-                  <Progress className="my-2" value={30} />
-                </div>
-              ))}
+                );
+              })}
             </div>
           </TabsContent>
         </Tabs>

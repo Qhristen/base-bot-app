@@ -1,36 +1,57 @@
 "use client";
 
-import React, { useContext } from "react";
-import Container from "../container";
-import Link from "next/link";
 import { ArrowLeft, MoneyBagColoredIcon } from "@/assets/icons";
-import { Button } from "../ui/Button";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { SpecialTask, TaskType } from "@/types";
-import { useRouter } from "next/navigation";
-import { useSubmitSpecialTask } from "@/hooks/useSubmitTask";
 import { TelegramContext } from "@/context/telegram-context";
+import {
+  fetchAlluserTask,
+  fetchSingleSpecialActivity,
+  fetchUserActivity,
+  submitSingleUserActivity,
+  submitSpecialTask,
+} from "@/redux/feature/task";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import Link from "next/link";
+import { useContext, useEffect } from "react";
 import CircularProgressBar from "../CircularProgressBar";
+import Container from "../container";
+import { Button } from "../ui/Button";
+import { useRouter } from "next/navigation";
 
 interface ITask {
   taskId: string;
 }
 
 const TaskDetails = ({ taskId }: ITask) => {
-  const { user } = useContext(TelegramContext);
+  const { user, webApp } = useContext(TelegramContext);
+  const dispatch = useAppDispatch();
+  const { singleSpecialTask, status, userActivities, userTasks } =
+    useAppSelector((state) => state.task);
 
-  const { isPending, error, data } = useQuery({
-    queryKey: ["specialTasks", taskId],
-    queryFn: () =>
-      axios
-        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/task/special/${taskId}`)
-        .then((response) => response.data?.data?.task as SpecialTask),
-  });
+  const router = useRouter();
 
-  const submitSpecialTask = useSubmitSpecialTask();
+  useEffect(() => {
+    dispatch(fetchSingleSpecialActivity(taskId));
+  }, [dispatch, taskId]);
 
-  if (isPending)
+  useEffect(() => {
+    dispatch(fetchUserActivity());
+    dispatch(fetchAlluserTask());
+  }, [dispatch]);
+
+  const isActivityCompleted = (activityId: string) => {
+    const activityStatus =
+      userActivities &&
+      userActivities.find(
+        (status) =>
+          status.activityId === activityId && status.userId === String(user?.id)
+      );
+    return activityStatus ? activityStatus.clicked : false;
+  };
+  const areAllActivitiesCompleted =
+    userTasks &&
+    userTasks.find((userT) => userT.taskId === String(singleSpecialTask?.id));
+
+  if (status === "loading")
     return (
       <CircularProgressBar
         percentage={10}
@@ -49,10 +70,9 @@ const TaskDetails = ({ taskId }: ITask) => {
         >
           <ArrowLeft />
         </Link>
-        <h1 className="text-2xl font-medium py-3">{data?.name}</h1>
+        <h1 className="text-2xl font-medium py-3">{singleSpecialTask?.name}</h1>
         <p className="text-gray-light">
-          We regularly share valuable content on our socials Join us there and
-          get the rewards
+        We regularly post valuable content on our social media. Connect with us there to earn rewards!
         </p>
         <div className="bg-gray rounded-2xl p-4 mt-10">
           <div className="flex items-center justify-between">
@@ -63,7 +83,7 @@ const TaskDetails = ({ taskId }: ITask) => {
               <div className="text-white">
                 <h4 className="font-normal text-white">Reward</h4>
                 <div className="flex items-center gap-2 font-normal text-white">
-                  <span className="text-sm">{data?.point} </span>
+                  <span className="text-sm">{singleSpecialTask?.point} </span>
                 </div>
               </div>
             </div>
@@ -71,15 +91,32 @@ const TaskDetails = ({ taskId }: ITask) => {
         </div>
 
         <div className="bg-gray rounded-2xl p-4 mt-5">
-          {data?.activities?.map((data, i) => (
+          {singleSpecialTask?.activities?.map((activity, i) => (
             <div key={i} className="py-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="text-white">
-                    <h4 className="font-medium text-white">{data.name}</h4>
+                    <h4 className="font-medium text-white">{activity.name}</h4>
                   </div>
                 </div>
-                <Button size={`sm`} variant={`primary`}>
+
+                <Button
+                  disabled={isActivityCompleted(activity.id)}
+                  onClick={(e) => {
+                    dispatch(
+                      submitSingleUserActivity({
+                        activityId: activity.id,
+                        clicked: true,
+                        userId: String(user?.id),
+                        taskId: singleSpecialTask.id,
+                      })
+                    );
+                    webApp?.openLink(`${activity.link}`);
+                    // webApp?.BackButton.show();
+                  }}
+                  size={`sm`}
+                  variant={`primary`}
+                >
                   Go
                 </Button>
               </div>
@@ -88,18 +125,20 @@ const TaskDetails = ({ taskId }: ITask) => {
         </div>
 
         <Button
-          onClick={async (event) => {
-            event.preventDefault();
-            await submitSpecialTask.mutate({
-              name: data?.name,
-              taskId: data?.id,
-              userId: String(user?.id),
-              status: "completed",
-              point: data?.point,
-              type: "special",
-            });
+          onClick={() => {
+            dispatch(
+              submitSpecialTask({
+                name: singleSpecialTask?.name,
+                status: "completed",
+                point: singleSpecialTask?.point,
+                type: "special",
+                taskId: singleSpecialTask?.id,
+                userId: String(user?.id),
+              })
+            );
+            router.push(`/mobile/task`);
           }}
-          disabled={submitSpecialTask.isPending}
+          disabled={areAllActivitiesCompleted ? true : false}
           size={`lg`}
           variant={`primary`}
           className="w-full mt-10"

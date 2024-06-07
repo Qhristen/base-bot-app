@@ -1,10 +1,10 @@
+import { Toaster } from "@/components/ui/toaster";
+import { TelegramProvider } from "@/context/telegram-context";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import local from "next/font/local";
 import "./globals.css";
-import ReactQueryProvider from "@/context/react-query-provider";
-import { TelegramProvider } from "@/context/telegram-context";
-import { Toaster } from "@/components/ui/toaster";
+import { Providers } from "@/redux/provider";
 
 const inter = Inter({ subsets: ["latin"] });
 const generalSans = local({
@@ -37,10 +37,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${generalSans.variable} ${inter.className}`}>
         <TelegramProvider>
-          <ReactQueryProvider>
+        <Providers>
             {children}
             <Toaster />
-          </ReactQueryProvider>
+        </Providers>
         </TelegramProvider>
       </body>
     </html>

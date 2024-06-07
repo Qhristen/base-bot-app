@@ -34,8 +34,8 @@ const Welcome = () => {
           <Image alt="logo" src={BaseLogoSm} />
         </div>
         <div className="text-center mt-10">
-          <h5 className="font-bold text-lg">Welcome to Base</h5>
-          <p>Tap on the coin and see your balance rise</p>
+          <h5 className="font-bold text-lg">Welcome to Eraswap</h5>
+          <p>Bop on the screen and watch your score rise</p>
         </div>
         <Link href={`/mobile/tap`}>
           <Button size={`lg`} className="w-full mt-20" variant={`primary`}>
