@@ -96,7 +96,7 @@ const Tap = () => {
         dispatch(setIsPressed(true));
         dispatch(
           updateMiningInfo({
-            limit: miningInfo.limit - miningInfo.perClick,
+            limit: Math.max(0, miningInfo.limit - miningInfo.perClick),
             status: "mining",
           })
         );

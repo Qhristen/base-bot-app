@@ -123,10 +123,12 @@ export const userSlice = createSlice({
       state.pointCount += action.payload;
     },
     updateTapguru(state) {
-      state.miningInfo = {
-        ...state.miningInfo,
-        perClick: Number(state?.user?.perclick) * 5,
-      };
+      if (state.miningInfo.limit !== 0) {
+        state.miningInfo = {
+          ...state.miningInfo,
+          perClick: Number(state?.user?.perclick) * 5,
+        };
+      }
     },
     updateMiningInfo(state, action: PayloadAction<Partial<MiningInfo>>) {
       state.miningInfo = { ...state.miningInfo, ...action.payload };
@@ -180,13 +182,19 @@ export const userSlice = createSlice({
       .addCase(updateScore.fulfilled, (state, action) => {
         state.status = "success";
       })
+      .addCase(getTapGuru.pending, (state, action) => {
+        state.status = "loading";
+      })
       .addCase(getTapGuru.fulfilled, (state, action: PayloadAction<User>) => {
         state.status = "success";
         state.miningInfo = {
           ...state.miningInfo,
-          limit: clamp(state.miningInfo.perClick * 5, state.miningInfo.limit, state.miningInfo.max),
+          limit: Math.max(0, state.miningInfo.limit),
           perClick: state.miningInfo.perClick * 5,
         };
+      })
+      .addCase(updateRefillSpeed.pending, (state, action) => {
+        state.status = "loading";
       })
       .addCase(
         updateRefillSpeed.fulfilled,
@@ -199,6 +207,9 @@ export const userSlice = createSlice({
         state.status = "success";
         state.badges = action.payload;
       })
+      .addCase(upadteMultitap.pending, (state, action) => {
+        state.status = "loading";
+      })
       .addCase(
         upadteMultitap.fulfilled,
         (state, action: PayloadAction<User>) => {
@@ -209,6 +220,9 @@ export const userSlice = createSlice({
           };
         }
       )
+      .addCase(updateChargeLimit.pending, (state, action) => {
+        state.status = "loading";
+      })
       .addCase(
         updateChargeLimit.fulfilled,
         (state, action: PayloadAction<User>) => {
@@ -220,6 +234,9 @@ export const userSlice = createSlice({
           };
         }
       )
+      .addCase(getFullEnergy.pending, (state, action) => {
+        state.status = "loading";
+      })
       .addCase(
         getFullEnergy.fulfilled,
         (state, action: PayloadAction<User>) => {
