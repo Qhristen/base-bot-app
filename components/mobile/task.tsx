@@ -71,7 +71,7 @@ const Task = () => {
     if (!userTasks) return;
 
     const checkTask = userTasks.find(
-      (userT) => userT.taskId === taskId && userT.status === "league"
+      (userT) => userT.taskId === taskId && userT.type === "league"
     );
 
     return checkTask ? true : false;
@@ -81,7 +81,7 @@ const Task = () => {
     if (!userTasks) return;
 
     const checkTask = userTasks.find(
-      (userT) => userT.taskId === taskId && userT.status === "ref"
+      (userT) => userT.taskId === taskId && userT.type === "ref"
     );
 
     return checkTask ? true : false;

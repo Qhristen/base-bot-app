@@ -50,16 +50,19 @@ const TaskDetails = ({ taskId }: ITask) => {
 
   const areAllActivitiesCompleted = () => {
     if (!userActivities) return;
-    const activityStatus = userActivities.every((status) =>
-    status.clicked ===  isActivityCompleted(status.activityId)
+    const activityStatus = userActivities.every(
+      (status) => status.clicked === isActivityCompleted(status.activityId)
     );
     return activityStatus ? true : false;
   };
 
   const isTaskSubmited =
-  userTasks &&
-  userTasks.find((userT) => userT.taskId === String(singleSpecialTask?.id));
-
+    userTasks &&
+    userTasks.find(
+      (userT) =>
+        userT.taskId === String(singleSpecialTask?.id) &&
+        userT.type === "special"
+    );
 
   if (status === "loading")
     return (
@@ -151,7 +154,9 @@ const TaskDetails = ({ taskId }: ITask) => {
             );
             router.push(`/mobile/task`);
           }}
-          disabled={areAllActivitiesCompleted() && isTaskSubmited ? true : false}
+          disabled={
+            areAllActivitiesCompleted() && isTaskSubmited ? true : false
+          }
           size={`lg`}
           variant={`primary`}
           className="w-full mt-10"
