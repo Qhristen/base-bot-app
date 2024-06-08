@@ -1,8 +1,15 @@
 import { Badge, User } from "@/types";
 import AxiosBaseUrl from "@/utils/services/axios-base-config";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getFullEnergy, getTapGuru, upadteMultitap, updateChargeLimit } from "./boost";
+import {
+  getFullEnergy,
+  getTapGuru,
+  upadteMultitap,
+  updateChargeLimit,
+  updateRefillSpeed,
+} from "./boost";
 import { stat } from "fs";
+import { clamp } from "@/utils/clamp-numbers";
 
 interface MiningInfo {
   limit: number;
@@ -142,12 +149,12 @@ export const userSlice = createSlice({
     incrementMiningLimit(state, action) {
       if (state.miningInfo.limit < state.miningInfo.max) {
         state.miningInfo.limit += action.payload;
-        if (
-          state.miningInfo.limit === state.miningInfo.max &&
-          state.miningInfo.limit !== state.miningInfo.max
-        ) {
-          state.miningInfo.limit = state.miningInfo.max;
-        }
+      }
+      if (
+        state.miningInfo.limit === state.miningInfo.max &&
+        state.miningInfo.limit !== state.miningInfo.max
+      ) {
+        state.miningInfo.limit = state.miningInfo.max;
       }
     },
   },
@@ -175,34 +182,44 @@ export const userSlice = createSlice({
       })
       .addCase(getTapGuru.fulfilled, (state, action: PayloadAction<User>) => {
         state.status = "success";
-        state.miningInfo ={
+        state.miningInfo = {
           ...state.miningInfo,
-          perClick: state.miningInfo.perClick * 5
-        }
+          limit: clamp(state.miningInfo.perClick * 5, state.miningInfo.limit, state.miningInfo.max),
+          perClick: state.miningInfo.perClick * 5,
+        };
       })
-      // .addCase(updateLimit.fulfilled, (state, action) => {
-      //   state.status = "success";
-      //   // state.user = action.payload;
-      // })
+      .addCase(
+        updateRefillSpeed.fulfilled,
+        (state, action: PayloadAction<User>) => {
+          state.status = "success";
+          state.user = action.payload;
+        }
+      )
       .addCase(fetchBadges.fulfilled, (state, action) => {
         state.status = "success";
         state.badges = action.payload;
       })
-      .addCase(upadteMultitap.fulfilled, (state, action: PayloadAction<User>) => {
-        // state.status = "success";
-        state.miningInfo ={
-          ...state.miningInfo,
-          perClick: action.payload.perclick
+      .addCase(
+        upadteMultitap.fulfilled,
+        (state, action: PayloadAction<User>) => {
+          state.status = "success";
+          state.miningInfo = {
+            ...state.miningInfo,
+            perClick: action.payload.perclick,
+          };
         }
-      })
-      .addCase(updateChargeLimit.fulfilled, (state, action: PayloadAction<User>) => {
-        // state.status = "success";
-        state.miningInfo ={
-          ...state.miningInfo,
-          limit: action.payload.limit,
-          max: action.payload.max
+      )
+      .addCase(
+        updateChargeLimit.fulfilled,
+        (state, action: PayloadAction<User>) => {
+          state.status = "success";
+          state.miningInfo = {
+            ...state.miningInfo,
+            limit: action.payload.limit,
+            max: action.payload.max,
+          };
         }
-      })
+      )
       .addCase(
         getFullEnergy.fulfilled,
         (state, action: PayloadAction<User>) => {

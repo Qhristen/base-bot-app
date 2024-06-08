@@ -1,21 +1,17 @@
 "use client";
 
 import { BaseLogoSm, LightBolt } from "@/assets/icons";
-import { TapGuruImage } from "@/assets/images";
 import { TelegramContext } from "@/context/telegram-context";
 
-import { getTapGuru } from "@/redux/feature/boost";
 import {
   addTextPoints,
   fetchUser,
   incrementMiningLimit,
-  incrementPoints,
   removePoint,
   setIsPressed,
-  updateLimit,
   updateMiningInfo,
   updateScore,
-  updateTapguru,
+  updateTapguru
 } from "@/redux/feature/user";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { formatCompactNumber } from "@/utils/formatNumber";
@@ -115,7 +111,7 @@ const Tap = () => {
         // });
       } else {
         dispatch(updateMiningInfo({ status: "stop" }));
-        // webApp?.showAlert("Mining limit reached. Please try again later.");
+        webApp?.showAlert("Mining limit reached, buy more refill speed.");
       }
     },
     [dispatch, miningInfo]
