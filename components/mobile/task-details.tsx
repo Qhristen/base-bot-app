@@ -47,9 +47,19 @@ const TaskDetails = ({ taskId }: ITask) => {
       );
     return activityStatus ? activityStatus.clicked : false;
   };
-  const areAllActivitiesCompleted =
-    userTasks &&
-    userTasks.find((userT) => userT.taskId === String(singleSpecialTask?.id));
+
+  const areAllActivitiesCompleted = () => {
+    if (!userActivities) return;
+    const activityStatus = userActivities.every((status) =>
+    status.clicked ===  isActivityCompleted(status.activityId)
+    );
+    return activityStatus ? true : false;
+  };
+
+  const isTaskSubmited =
+  userTasks &&
+  userTasks.find((userT) => userT.taskId === String(singleSpecialTask?.id));
+
 
   if (status === "loading")
     return (
@@ -72,7 +82,8 @@ const TaskDetails = ({ taskId }: ITask) => {
         </Link>
         <h1 className="text-2xl font-medium py-3">{singleSpecialTask?.name}</h1>
         <p className="text-gray-light">
-        We regularly post valuable content on our social media. Connect with us there to earn rewards!
+          We regularly post valuable content on our social media. Connect with
+          us there to earn rewards!
         </p>
         <div className="bg-gray rounded-2xl p-4 mt-10">
           <div className="flex items-center justify-between">
@@ -111,6 +122,8 @@ const TaskDetails = ({ taskId }: ITask) => {
                         taskId: singleSpecialTask.id,
                       })
                     );
+                    dispatch(fetchUserActivity());
+                    dispatch(fetchAlluserTask());
                     webApp?.openLink(`${activity.link}`);
                     // webApp?.BackButton.show();
                   }}
@@ -138,7 +151,7 @@ const TaskDetails = ({ taskId }: ITask) => {
             );
             router.push(`/mobile/task`);
           }}
-          disabled={areAllActivitiesCompleted ? true : false}
+          disabled={areAllActivitiesCompleted() && isTaskSubmited ? true : false}
           size={`lg`}
           variant={`primary`}
           className="w-full mt-10"

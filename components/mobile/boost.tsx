@@ -9,7 +9,7 @@ import {
 import { TelegramContext } from "@/context/telegram-context";
 import { useUser } from "@/hooks/useUser";
 import Image from "next/image";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import CircularProgressBar from "../CircularProgressBar";
 import Container from "../container";
 import { Button } from "../ui/Button";
@@ -32,13 +32,17 @@ import {
   updateChargeLimit,
   updateRefillSpeed,
 } from "@/redux/feature/boost";
-import { updateTapguru } from "@/redux/feature/user";
+import { fetchUser, updateTapguru } from "@/redux/feature/user";
 
 const Boost = () => {
   const { user, webApp } = useContext(TelegramContext);
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { user: userData, status } = useAppSelector((state) => state.user);
+
+  useEffect(() => {
+    dispatch(fetchUser(String(user?.id)));
+  }, [dispatch, webApp, user]);
 
   if (status === "loading")
     return (
@@ -91,23 +95,23 @@ const Boost = () => {
                           <Image src={RefillSpeedIcon} alt="LightBolt" />
                         </div>
                       </div> */}
-                      <div className="font-thin text-center">
+                      {/* <div className="font-thin text-center">
                         <div className="flex items-center justify-center gap-2">
                           <div className="flex items-center gap-0 text-white">
                             <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
                             <span>{userData?.max}</span>
                           </div>
                         </div>
-                      </div>
+                      </div> */}
                       <DialogDescription className="font-thin text-center">
-                      Fill your energy to the max
+                        Fill your energy to the max
                       </DialogDescription>
                     </DialogHeader>
                     <Button
-                      onClick={async() => {
+                      onClick={async () => {
                         if (userData?.fullEnergy?.min !== 0) {
-                         await dispatch(updateTapguru());
-                         await dispatch(
+                          await dispatch(updateTapguru());
+                          await dispatch(
                             getFullEnergy({
                               min: Number(
                                 userData?.fullEnergy?.min &&
@@ -132,7 +136,6 @@ const Boost = () => {
                     </Button>
                   </DialogContent>
                 </Dialog>
-
               </div>
             </div>
             <div className="my-5">
@@ -163,7 +166,7 @@ const Boost = () => {
                           <Image src={RefillSpeedIcon} alt="LightBolt" />
                         </div>
                       </div> */}
-                      <div className="font-thin text-center">
+                      {/* <div className="font-thin text-center">
                         <div className="flex items-center justify-center gap-2">
                           <div className="flex items-center gap-0 text-white">
                             <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
@@ -171,31 +174,30 @@ const Boost = () => {
                           </div>
                         
                         </div>
-                      </div>
+                      </div> */}
                       <DialogDescription className="font-thin text-center">
-                      Multiply your tap income by x5 for 20 seconds.
+                        Multiply your tap income by x5 for 20 seconds.
                       </DialogDescription>
                     </DialogHeader>
                     <Button
-                     onClick={() => {
-                      if (userData?.tapGuru?.min !== 0) {
-                        dispatch(
-                          getTapGuru({
-                            min: Number(
-                              userData?.tapGuru?.min &&
-                                userData?.tapGuru?.min
-                            ),
-                            max: Number(userData?.tapGuru?.max),
-                            active: true,
-                            userId: String(user?.id),
-                          })
-                        );
-                        dispatch(updateTapguru());
-                        router.push(`/mobile/tap`);
-                      } else {
-                        webApp?.showAlert("You have exceeded your limit");
-                      }
-                    }}
+                      onClick={() => {
+                        if (userData?.tapGuru?.min !== 0) {
+                          dispatch(
+                            getTapGuru({
+                              min: Number(
+                                userData?.tapGuru?.min && userData?.tapGuru?.min
+                              ),
+                              max: Number(userData?.tapGuru?.max),
+                              active: true,
+                              userId: String(user?.id),
+                            })
+                          );
+                          dispatch(updateTapguru());
+                          router.push(`/mobile/tap`);
+                        } else {
+                          webApp?.showAlert("You have exceeded your limit");
+                        }
+                      }}
                       className="w-full"
                       variant={`primary`}
                       size={`lg`}
@@ -204,8 +206,6 @@ const Boost = () => {
                     </Button>
                   </DialogContent>
                 </Dialog>
-
-               
               </div>
             </div>
           </div>
@@ -263,13 +263,19 @@ const Boost = () => {
                     </DialogHeader>
                     <Button
                       onClick={() => {
-                        dispatch(
-                          upadteMultitap({
-                            userId: String(user?.id),
-                            point: Number(userData?.max) * 2,
-                          })
-                        );
-                        router.push(`/mobile/tap`);
+                        if (userData && userData?.totalPoint >= userData?.max) {
+                          dispatch(
+                            upadteMultitap({
+                              userId: String(user?.id),
+                              point: Number(userData?.max) * 2,
+                            })
+                          );
+                          router.push(`/mobile/tap`);
+                        } else {
+                          webApp?.showAlert(
+                            "You do not have enough point to update multi bop."
+                          );
+                        }
                       }}
                       className="w-full"
                       variant={`primary`}
@@ -330,14 +336,20 @@ const Boost = () => {
                     </DialogHeader>
                     <Button
                       onClick={() => {
-                        dispatch(
-                          updateChargeLimit({
-                            userId: String(user?.id),
-                            limit: Number(userData?.max) * 2,
-                            point: Number(userData?.max),
-                          })
-                        );
-                        router.push(`/mobile/tap`);
+                        if (userData && userData?.totalPoint >= userData?.max) {
+                          dispatch(
+                            updateChargeLimit({
+                              userId: String(user?.id),
+                              limit: Number(userData?.max) * 2,
+                              point: Number(userData?.max),
+                            })
+                          );
+                          router.push(`/mobile/tap`);
+                        } else {
+                          webApp?.showAlert(
+                            "You do not have enough point to increase charge limit."
+                          );
+                        }
                       }}
                       className="w-full"
                       variant={`primary`}
@@ -398,14 +410,20 @@ const Boost = () => {
                     </DialogHeader>
                     <Button
                       onClick={() => {
-                        dispatch(
-                          updateRefillSpeed({
-                            userId: String(user?.id),
-                            speed: Number(userData?.refillSpeed) + 1,
-                            point: Number(userData?.max),
-                          })
-                        );
-                        router.push(`/mobile/tap`);
+                        if (userData && userData?.totalPoint >= userData?.max) {
+                          dispatch(
+                            updateRefillSpeed({
+                              userId: String(user?.id),
+                              speed: Number(userData?.refillSpeed) + 1,
+                              point: Number(userData?.max),
+                            })
+                          );
+                          router.push(`/mobile/tap`);
+                        } else {
+                          webApp?.showAlert(
+                            "You do not have enough point to refill speed."
+                          );
+                        }
                       }}
                       className="w-full"
                       variant={`primary`}

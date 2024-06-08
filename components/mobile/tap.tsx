@@ -45,51 +45,46 @@ const Tap = () => {
     const interval = setInterval(() => {
       if (miningInfo.limit < miningInfo.max) {
         dispatch(incrementMiningLimit(userData?.refillSpeed));
+        // dispatch(
+        //   updateLimit({
+        //     max: Number(miningInfo?.max),
+        //     min: Number(miningInfo?.limit),
+        //     userId: String(user?.id),
+        //   })
+        // );
       } else {
         clearInterval(interval);
       }
     }, 1000);
 
     return () => {
-      dispatch(
-        updateLimit({
-          max: Number(miningInfo?.max),
-          min: Number(miningInfo?.limit),
-          userId: String(user?.id),
-        })
-      );
       clearInterval(interval);
     };
-  }, [dispatch, miningInfo]);
+  }, [dispatch, miningInfo, user?.id]);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     if (userData && userData?.tapGuru.min !== 0) {
-  //       dispatch(updateTapguru());
-  //       // dispatch(
-  //       //   getTapGuru({
-  //       //     min: Number(userData?.tapGuru?.min && userData?.tapGuru?.min - 1),
-  //       //     max: Number(userData?.tapGuru?.max),
-  //       //     active: false,
-  //       //     userId: String(user?.id),
-  //       //   })
-  //       // );
-  //     } else {
-  //       clearInterval(interval);
-  //     }
-  //   }, 20000);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (userData && userData?.tapGuru.min !== 0) {
+        dispatch(updateTapguru());
+        dispatch(
+          updateMiningInfo({
+            perClick: userData.perclick,
+          })
+        );
+      } else {
+        clearInterval(interval);
+      }
+    }, 20000);
 
-  //   return () => {
-  //     clearInterval(interval);
-  //   };
-  // }, [dispatch]);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [dispatch, userData?.tapGuru]);
 
   const handleCoinTap = useCallback(
     (event: React.TouchEvent<HTMLImageElement>) => {
       event.preventDefault();
       if (miningInfo.limit !== 0) {
-        dispatch(setIsPressed(true));
-
         // audio.play();
 
         const touchPoints = Array.from(event.touches)
@@ -102,28 +97,50 @@ const Tap = () => {
           }));
 
         dispatch(addTextPoints(touchPoints));
-        touchPoints.forEach((touch) => {
-          dispatch(
-            updateMiningInfo({
-              limit: miningInfo.limit - miningInfo.perClick,
-              status: "mining",
-            })
-          );
-          dispatch(incrementPoints(miningInfo.perClick));
-          dispatch(
-            updateScore({
-              userId: String(user?.id),
-              point: miningInfo.perClick,
-            })
-          );
-        });
+        dispatch(setIsPressed(true));
+        dispatch(
+          updateMiningInfo({
+            limit: miningInfo.limit - miningInfo.perClick,
+            status: "mining",
+          })
+        );
+        // dispatch(incrementPoints(miningInfo.perClick));
+        dispatch(
+          updateScore({
+            userId: String(user?.id),
+            point: miningInfo.perClick,
+          })
+        );
+        // touchPoints.forEach((touch) => {
+        // });
       } else {
         dispatch(updateMiningInfo({ status: "stop" }));
         // webApp?.showAlert("Mining limit reached. Please try again later.");
       }
     },
-    [dispatch, miningInfo, userData]
+    [dispatch, miningInfo]
   );
+
+  const handleTouchEnd = (event: React.TouchEvent<HTMLImageElement>) => {
+    const endedTouches = Array.from(event.touches);
+
+    const endedTouchPoints = endedTouches.map((touch, index) => ({
+      id: index,
+      identifier: touch.identifier,
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+    }));
+
+    endedTouchPoints.forEach((touch) => {
+      dispatch(setIsPressed(true));
+      dispatch(
+        updateScore({
+          userId: String(user?.id),
+          point: miningInfo.perClick,
+        })
+      );
+    });
+  };
 
   const handleRemovePoint = useCallback(
     (id: number) => {
@@ -183,7 +200,7 @@ const Tap = () => {
         <div className="relative flex items-center tabular-nums gap-0 justify-center mt-10 cursor-pointer overflow-hidden">
           <Image
             onTouchStart={handleCoinTap}
-            onTouchEnd={() => setIsPressed(false)}
+            onTouchEnd={handleTouchEnd}
             alt="logo"
             className="rounded-full z-20"
             src={BaseLogoSm}

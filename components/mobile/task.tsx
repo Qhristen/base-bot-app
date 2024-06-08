@@ -29,6 +29,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   claimLeaguePoint,
   claimRefPoint,
+  fetchAlluserTask,
   fetchLeagueTask,
   fetchRefTask,
   fetchSpecialTask,
@@ -39,9 +40,8 @@ const Task = () => {
   const { user, webApp } = useContext(TelegramContext);
   const { toast } = useToast();
   const dispatch = useAppDispatch();
-  const { leagueTask, refTask, specialTask, status } = useAppSelector(
-    (state) => state.task
-  );
+  const { leagueTask, refTask, specialTask, status, userTasks } =
+    useAppSelector((state) => state.task);
   const {
     user: userData,
     status: userStatus,
@@ -56,6 +56,7 @@ const Task = () => {
     dispatch(fetchRefTask());
     dispatch(fetchLeagueTask());
     dispatch(fetchSpecialTask());
+    dispatch(fetchAlluserTask());
   }, [dispatch]);
 
   const userLeagueImage =
@@ -64,6 +65,26 @@ const Task = () => {
   const onCopy = (data: string) => {
     navigator.clipboard.writeText(data);
     toast({ description: "Referral link copied." });
+  };
+
+  const isCompletedLeagueTask = (taskId: string) => {
+    if (!userTasks) return;
+
+    const checkTask = userTasks.find(
+      (userT) => userT.taskId === taskId && userT.status === "league"
+    );
+
+    return checkTask ? true : false;
+  };
+
+  const isCompletedRefTask = (taskId: string) => {
+    if (!userTasks) return;
+
+    const checkTask = userTasks.find(
+      (userT) => userT.taskId === taskId && userT.status === "ref"
+    );
+
+    return checkTask ? true : false;
   };
 
   if (status === "loading" || userStatus === "loading")
@@ -132,9 +153,9 @@ const Task = () => {
                 const LeagueImage = getImageForUserLevel(
                   `${data.name.toLowerCase()}`
                 );
-       
+
                 const progress =
-                  userData && ( userData?.totalPoint - data.point ) * 100;
+                  userData && (userData?.totalPoint - data.point) * 100;
                 return (
                   <div key={i} className="my-5">
                     <div className="flex items-center justify-between">
@@ -164,10 +185,13 @@ const Task = () => {
                               type: "league",
                             })
                           );
+                          dispatch(fetchAlluserTask());
                         }}
                         disabled={
                           userData?.league.trim().toLowerCase() !==
                           data.name.trim().toLowerCase()
+                            ? true
+                            : isCompletedLeagueTask(data.id)
                             ? true
                             : false
                         }
@@ -177,7 +201,12 @@ const Task = () => {
                         Claim
                       </Button>
                     </div>
-                    <Progress className="my-2" value={Number(Math.min(Math.max(Number(progress), 0), 100).toFixed(2))} />
+                    <Progress
+                      className="my-2"
+                      value={Number(
+                        Math.min(Math.max(Number(progress), 0), 100).toFixed(2)
+                      )}
+                    />
                   </div>
                 );
               })}
@@ -273,10 +302,11 @@ const Task = () => {
                               type: "ref",
                             })
                           );
+                          dispatch(fetchAlluserTask());
                         }}
                         disabled={
                           data.totalInvite === userData?.friendsReferred
-                            ? false
+                            ? isCompletedRefTask(data.id) ? true : false
                             : true
                         }
                         size={`sm`}
