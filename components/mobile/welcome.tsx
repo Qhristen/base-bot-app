@@ -1,28 +1,37 @@
 "use client";
 
 import { BaseLogoSm, TableUserFiled } from "@/assets/icons";
-import { BaseLogoLg } from "@/assets/images";
+import { TelegramContext } from "@/context/telegram-context";
 import Image from "next/image";
-import React, { useContext, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useContext, useEffect, useState } from "react";
 import Container from "../container";
 import { Button } from "../ui/Button";
-import Link from "next/link";
-import { TelegramContext } from "@/context/telegram-context";
 
 const Welcome = () => {
   const { webApp, user } = useContext(TelegramContext);
-  
+  const router = useRouter();
+  const [hasSeenPage, setHasSeenPage] = useState(false);
+
   useEffect(() => {
+    const hasSeenPage = localStorage.getItem("hasSeenPage");
+    if (hasSeenPage) {
+      router.push(`/mobile/tap`);
+    }else{
+      setHasSeenPage(true)
+    }
     webApp?.expand();
   }, [webApp]);
 
+
+  if(hasSeenPage) return
+  
   return (
     <Container>
       <div className="flex w-full h-full flex-col justify-between text-white p-5 mb-40">
         {user ? (
-          <div
-            className="flex justify-center"
-          >
+          <div className="flex justify-center">
             <div className="flex gap-2 items-center w-max justify-center border-2 border-white rounded-2xl p-3">
               <TableUserFiled />
               <span>{user?.username}</span>
@@ -38,7 +47,12 @@ const Welcome = () => {
           <p>Bop on the screen and watch your score rise</p>
         </div>
         <Link href={`/mobile/tap`}>
-          <Button size={`lg`} className="w-full mt-20" variant={`primary`}>
+          <Button
+            onClick={() => localStorage.setItem("hasSeenPage", "true")}
+            size={`lg`}
+            className="w-full mt-20"
+            variant={`primary`}
+          >
             Get started
           </Button>
         </Link>

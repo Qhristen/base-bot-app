@@ -111,7 +111,7 @@ const Task = () => {
 
           <Link href={`/badges`}>
             <div className="flex items-center gap-2 bg-gray px-3 py-2 rounded-xl">
-              <div className="w-4 h-4">
+              <div className="w-7 h-7">
                 <Image src={`${userLeagueImage}`} alt="novice" />
               </div>
               <h2 className="text-white capitalize">{userData?.league}</h2>
@@ -227,7 +227,7 @@ const Task = () => {
                     <h4 className="font-normal text-white">Invite bonus</h4>
                     <div className="flex items-center gap-2 font-normal text-white">
                       <span className="text-sm">
-                        Up to <span className="font-bold">30 000 </span>for a
+                        Up to <span className="font-bold">25 00 </span>for a
                         friend
                       </span>
                     </div>

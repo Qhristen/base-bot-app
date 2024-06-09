@@ -44,7 +44,7 @@ const Stats = () => {
           <div className="text-gray-light mix-blend-plus-lighter">
             Total balance
           </div>
-          <h1 className="text-4xl font-black text-white">{stats && formatCompactNumber(stats?.totalTouches)}</h1>
+          <h1 className="text-4xl font-black text-white">{stats && formatCompactNumber(stats?.totalPoints)}</h1>
         </div>
 
         <div className="grid grid-cols-2 gap-2 mt-10">
@@ -54,7 +54,7 @@ const Stats = () => {
                 Total Touches
               </div>
               <h1 className="text-3xl font-black text-white">
-                {stats && formatCompactNumber(stats?.totalPoints)}
+                {stats && formatCompactNumber(stats?.totalTouches)}
               </h1>
             </div>
           </div>
