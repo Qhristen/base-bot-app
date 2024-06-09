@@ -37,7 +37,7 @@ const TaskDetails = ({ taskId }: ITask) => {
   useEffect(() => {
     dispatch(fetchUserActivity());
     dispatch(fetchAlluserTask());
-  }, [dispatch]);
+  }, [dispatch, user]);
 
   const isActivityCompleted = (activityId: string) => {
     const activityStatus =
@@ -49,13 +49,10 @@ const TaskDetails = ({ taskId }: ITask) => {
     return activityStatus ? activityStatus.clicked : false;
   };
 
-  const areAllActivitiesCompleted = () => {
-    if (!userActivities) return;
-    const activityStatus = userActivities.every(
-      (status) => status.clicked === isActivityCompleted(status.activityId)
-    );
-    return activityStatus ? true : false;
-  };
+  const allTasksCompleted = singleSpecialTask && singleSpecialTask.activities.every(activity =>
+    userActivities && userActivities.some(completedTask => completedTask.activityId === activity.id)
+  );
+
 
   const isTaskSubmited =
     userTasks &&
@@ -128,7 +125,9 @@ const TaskDetails = ({ taskId }: ITask) => {
                     );
                     dispatch(fetchUserActivity());
                     dispatch(fetchAlluserTask());
+                    dispatch(fetchSingleSpecialActivity(taskId));
                     webApp?.openLink(`${activity.link}`);
+                    router.push(`/mobile/task`);
                     // webApp?.BackButton.show();
                   }}
                   size={`sm`}
@@ -141,32 +140,34 @@ const TaskDetails = ({ taskId }: ITask) => {
           ))}
         </div>
 
-        <Button
-          onClick={() => {
-            dispatch(
-              submitSpecialTask({
-                name: singleSpecialTask?.name,
-                status: "completed",
-                point: singleSpecialTask?.point,
-                type: "special",
-                taskId: singleSpecialTask?.id,
-                userId: String(user?.id),
-              })
-            );
-            dispatch(fetchUser(String(user?.id)));
-            dispatch(fetchUserActivity());
-            dispatch(fetchAlluserTask());
-            router.push(`/mobile/task`);
-          }}
-          disabled={
-            isTaskSubmited ? true : false && areAllActivitiesCompleted()
-          }
-          size={`lg`}
-          variant={`primary`}
-          className="w-full mt-10"
-        >
-          Submit task
-        </Button>
+       {!isTaskSubmited ? (
+          <Button
+          disabled={!allTasksCompleted }
+            onClick={() => {
+              dispatch(
+                submitSpecialTask({
+                  name: singleSpecialTask?.name,
+                  status: "completed",
+                  point: singleSpecialTask?.point,
+                  type: "special",
+                  taskId: singleSpecialTask?.id,
+                  userId: String(user?.id),
+                })
+              );
+              dispatch(fetchUser(String(user?.id)));
+              dispatch(fetchUserActivity());
+              dispatch(fetchAlluserTask());
+              router.push(`/mobile/task`);
+  
+            }}
+            
+            size={`lg`}
+            variant={`primary`}
+            className="w-full mt-10"
+          >
+            Submit task
+          </Button>
+        ): ""}
       </div>
     </Container>
   );
