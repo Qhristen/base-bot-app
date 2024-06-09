@@ -25,7 +25,6 @@ const Welcome = () => {
   }, [webApp]);
 
 
-  if(hasSeenPage) return
   
   return (
     <Container>
