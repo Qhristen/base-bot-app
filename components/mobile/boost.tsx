@@ -32,7 +32,7 @@ import {
   updateChargeLimit,
   updateRefillSpeed,
 } from "@/redux/feature/boost";
-import { fetchUser, updateTapguru } from "@/redux/feature/user";
+import { fetchUser } from "@/redux/feature/user";
 
 const Boost = () => {
   const { user, webApp } = useContext(TelegramContext);
@@ -110,7 +110,6 @@ const Boost = () => {
                     <Button
                       onClick={async () => {
                         if (userData?.fullEnergy?.min !== 0) {
-                          await dispatch(updateTapguru());
                           await dispatch(
                             getFullEnergy({
                               min: Number(
@@ -192,7 +191,6 @@ const Boost = () => {
                               userId: String(user?.id),
                             })
                           );
-                          dispatch(updateTapguru());
                           router.push(`/mobile/tap`);
                         } else {
                           webApp?.showAlert("You have exceeded your limit");
