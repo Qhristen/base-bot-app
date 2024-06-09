@@ -1,5 +1,5 @@
 const LeagueBadges: Record<string, string> = {
-  novice: `/badges/novice.png`,
+  novice: `/badges/NoviceBadge.png`,
   rookie: `/badges/RookieBadge.png`,
   senior: `/badges/SeniorBadge.png`,
   junior: `/badges/JuniorBadge.png`,

@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 import local from "next/font/local";
 import "./globals.css";
 import { Providers } from "@/redux/provider";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 const generalSans = local({
@@ -26,6 +27,9 @@ const generalSans = local({
 export const metadata: Metadata = {
   title: "Base app",
   description: "Welcome to Base",
+  other: {
+    
+  }
 };
 
 export default function RootLayout({
@@ -35,6 +39,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+      </Head>
       <body className={`${generalSans.variable} ${inter.className}`}>
         <TelegramProvider>
         <Providers>

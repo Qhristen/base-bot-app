@@ -123,6 +123,11 @@ export interface User {
   max: number;
   fullEnergy: Response;
   multiTap: number;
+  multiTapPoint: number;
+  multiTapLevel: number;
+  chargeLevel: number;
+  refillPoint: number;
+  refillLevel: number;
   tapGuru: Response;
   friendsReferred: number;
   lastInteraction: Date;

@@ -225,7 +225,7 @@ const Boost = () => {
                     <div className="flex items-center gap-2 font-normal text-white">
                       <div className="flex items-center gap-0 text-white">
                         <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                        <span>{userData?.max}</span>
+                        <span>{userData?.multiTapPoint}</span>
                       </div>
                     </div>
                   </div>
@@ -246,13 +246,13 @@ const Boost = () => {
                         <div className="flex items-center justify-center gap-2">
                           <div className="flex items-center gap-0 text-white">
                             <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                            <span>{userData?.max}</span>
+                            <span>{userData?.multiTapPoint}</span>
                           </div>
                           <div className="flex items-center gap-0">
                             <div className="flex items-center justify-center w-4 h-4 rounded-full p-0.5 bg-white text-black">
-                              1
+                              {userData?.multiTapLevel}
                             </div>
-                            <span>Level</span>
+                            <span className="p-1">Level</span>
                           </div>
                         </div>
                       </div>
@@ -263,11 +263,11 @@ const Boost = () => {
                     </DialogHeader>
                     <Button
                       onClick={() => {
-                        if (userData && userData?.totalPoint >= userData?.max) {
+                        if (userData && userData?.totalPoint >= userData?.multiTapPoint) {
                           dispatch(
                             upadteMultitap({
                               userId: String(user?.id),
-                              point: Number(userData?.max) * 2,
+                              point: Number(userData?.multiTapPoint) * 2,
                             })
                           );
                           router.push(`/mobile/tap`);
@@ -298,7 +298,8 @@ const Boost = () => {
                     <div className="flex items-center gap-2 font-normal text-white">
                       <div className="flex items-center gap-0 text-white">
                         <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                        <span>{userData?.max}</span>
+                        <span> {userData &&
+                                userData?.max * 2 + userData?.max / 2}</span>
                       </div>
                     </div>
                   </div>
@@ -319,13 +320,16 @@ const Boost = () => {
                         <div className="flex items-center justify-center gap-2">
                           <div className="flex items-center gap-0 text-white">
                             <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                            <span>{userData?.max}</span>
+                            <span>
+                              {userData &&
+                                userData?.max * 2 + userData?.max / 2}
+                            </span>
                           </div>
                           <div className="flex items-center gap-0">
                             <div className="flex items-center justify-center w-4 h-4 rounded-full p-0.5 bg-white text-black">
-                              1
+                              {userData?.chargeLevel}
                             </div>
-                            <span>Level</span>
+                            <span className="p-1">Level</span>
                           </div>
                         </div>
                       </div>
@@ -372,7 +376,7 @@ const Boost = () => {
                     <div className="flex items-center gap-2 font-normal text-white">
                       <div className="flex items-center gap-0 text-white">
                         <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                        <span>{userData?.max}</span>
+                        <span>{userData?.refillPoint}</span>
                       </div>
                     </div>
                   </div>
@@ -393,13 +397,13 @@ const Boost = () => {
                         <div className="flex items-center justify-center gap-2">
                           <div className="flex items-center gap-0 text-white">
                             <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                            <span>{userData?.max}</span>
+                            <span>{userData?.refillPoint}</span>
                           </div>
                           <div className="flex items-center gap-0">
                             <div className="flex items-center justify-center w-4 h-4 rounded-full p-0.5 bg-white text-black">
-                              1
+                              {userData?.refillLevel}
                             </div>
-                            <span>Level</span>
+                            <span className="p-1">Level</span>
                           </div>
                         </div>
                       </div>
@@ -410,12 +414,12 @@ const Boost = () => {
                     </DialogHeader>
                     <Button
                       onClick={() => {
-                        if (userData && userData?.totalPoint >= userData?.max) {
+                        if (userData && userData?.totalPoint >= userData?.refillPoint) {
                           dispatch(
                             updateRefillSpeed({
                               userId: String(user?.id),
                               speed: Number(userData?.refillSpeed) + 1,
-                              point: Number(userData?.max),
+                              point: Number(userData?.refillPoint),
                             })
                           );
                           router.push(`/mobile/tap`);

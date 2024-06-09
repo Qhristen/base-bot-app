@@ -149,67 +149,68 @@ const Task = () => {
           </TabsContent>
           <TabsContent value="leagues">
             <div className="bg-gray rounded-2xl p-3">
-              {leagueTask?.map((data, i) => {
-                const LeagueImage = getImageForUserLevel(
-                  `${data.name.toLowerCase()}`
-                );
+              {leagueTask
+                ?.filter((leag) => leag.name !== "Novice")
+                ?.map((data, i) => {
+                  const LeagueImage = getImageForUserLevel(
+                    `${data.name.toLowerCase()}`
+                  );
 
-                const progress =
-                  userData && (userData?.totalPoint - data.point) * 100;
-                return (
-                  <div key={i} className="my-5">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
-                          <Image src={LeagueImage} alt="user" />
-                        </div>
-                        <div className="text-white">
-                          <h4 className="font-medium text-white">
-                            {data.name}
-                          </h4>
-                          <div className="flex items-center gap-2 font-bold text-white">
-                            <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
-                            <span>{data?.point}</span>
+                  const progress =
+                    userData && (userData?.points / data.point) * 100;
+                  return (
+                    <div key={i} className="my-5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
+                            <Image src={LeagueImage} alt="user" />
+                          </div>
+                          <div className="text-white">
+                            <h4 className="font-medium text-white">
+                              {data.name}
+                            </h4>
+                            <div className="flex items-center gap-2 font-bold text-white">
+                              <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
+                              <span>{data?.point}</span>
+                            </div>
                           </div>
                         </div>
+                        <Button
+                          onClick={() => {
+                            dispatch(
+                              claimLeaguePoint({
+                                name: data.name,
+                                taskId: data?.id,
+                                userId: String(user?.id),
+                                status: "completed",
+                                point: data?.point,
+                                type: "league",
+                              })
+                            );
+                            dispatch(fetchUser(String(user?.id)));
+                            dispatch(fetchAlluserTask());
+                          }}
+                          disabled={
+                            userData?.league.trim().toLowerCase() !==
+                            data.name.trim().toLowerCase()
+                              ? true
+                              : isCompletedLeagueTask(data.id)
+                              ? true
+                              : false
+                          }
+                          size={`sm`}
+                          variant={`primary`}
+                        >
+                          Claim
+                        </Button>
                       </div>
-                      <Button
-                        onClick={() => {
-                          dispatch(
-                            claimLeaguePoint({
-                              name: data.name,
-                              taskId: data?.id,
-                              userId: String(user?.id),
-                              status: "completed",
-                              point: data?.point,
-                              type: "league",
-                            })
-                          );
-                          dispatch(fetchAlluserTask());
-                        }}
-                        disabled={
-                          userData?.league.trim().toLowerCase() !==
-                          data.name.trim().toLowerCase()
-                            ? true
-                            : isCompletedLeagueTask(data.id)
-                            ? true
-                            : false
-                        }
-                        size={`sm`}
-                        variant={`primary`}
-                      >
-                        Claim
-                      </Button>
+                      <Progress
+                        className="my-2"
+                        value={Number(Number(progress).toFixed(2))}
+                      />
                     </div>
-                    <Progress
-                      className="my-2"
-                      value={Number(
-                        Math.min(Math.max(Number(progress), 0), 100).toFixed(2)
-                      )}
-                    />
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </TabsContent>
           <TabsContent value="ref">
@@ -306,7 +307,9 @@ const Task = () => {
                         }}
                         disabled={
                           data.totalInvite === userData?.friendsReferred
-                            ? isCompletedRefTask(data.id) ? true : false
+                            ? isCompletedRefTask(data.id)
+                              ? true
+                              : false
                             : true
                         }
                         size={`sm`}

@@ -16,6 +16,7 @@ import CircularProgressBar from "../CircularProgressBar";
 import Container from "../container";
 import { Button } from "../ui/Button";
 import { useRouter } from "next/navigation";
+import { fetchUser } from "@/redux/feature/user";
 
 interface ITask {
   taskId: string;
@@ -152,10 +153,13 @@ const TaskDetails = ({ taskId }: ITask) => {
                 userId: String(user?.id),
               })
             );
+            dispatch(fetchUser(String(user?.id)));
+            dispatch(fetchUserActivity());
+            dispatch(fetchAlluserTask());
             router.push(`/mobile/task`);
           }}
           disabled={
-            areAllActivitiesCompleted() && isTaskSubmited ? true : false
+            isTaskSubmited ? true : false && areAllActivitiesCompleted()
           }
           size={`lg`}
           variant={`primary`}

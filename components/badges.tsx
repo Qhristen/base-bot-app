@@ -68,11 +68,15 @@ const Badges = () => {
 
               <div className="text-center py-10">
                 <div className="py-2">
-                  {userData?.totalPoint}/{badge.points}
+                  {userData?.points}/{badge.points}
                 </div>
                 <Progress
                   className="h-4"
-                  value={userData && (badge.points / userData?.points) * 100}
+                  value={Number(
+                    (
+                      userData && (userData?.points / badge.points) * 100
+                    )?.toFixed(2)
+                  )}
                 />
               </div>
             </div>
