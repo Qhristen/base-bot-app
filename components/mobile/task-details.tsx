@@ -49,17 +49,24 @@ const TaskDetails = ({ taskId }: ITask) => {
     return activityStatus ? activityStatus.clicked : false;
   };
 
-  const allTasksCompleted = singleSpecialTask && singleSpecialTask.activities.every(activity =>
-    userActivities && userActivities.some(completedTask => completedTask.activityId === activity.id)
-  );
-
+  const allTasksCompleted =
+    singleSpecialTask &&
+    singleSpecialTask.activities.every(
+      (activity) =>
+        userActivities &&
+        userActivities.some(
+          (completedTask) =>
+            completedTask.activityId === activity.id && completedTask.userId === String(user?.id) &&
+            completedTask.clicked === true
+        )
+    );
 
   const isTaskSubmited =
     userTasks &&
     userTasks.find(
       (userT) =>
         userT.taskId === String(singleSpecialTask?.id) &&
-        userT.type === "special"
+        userT.userId === String(user?.id)
     );
 
   if (status === "loading")
@@ -140,9 +147,9 @@ const TaskDetails = ({ taskId }: ITask) => {
           ))}
         </div>
 
-       {!isTaskSubmited ? (
+        {!isTaskSubmited ? (
           <Button
-          disabled={!allTasksCompleted }
+            disabled={!allTasksCompleted}
             onClick={() => {
               dispatch(
                 submitSpecialTask({
@@ -158,16 +165,16 @@ const TaskDetails = ({ taskId }: ITask) => {
               dispatch(fetchUserActivity());
               dispatch(fetchAlluserTask());
               router.push(`/mobile/task`);
-  
             }}
-            
             size={`lg`}
             variant={`primary`}
             className="w-full mt-10"
           >
             Submit task
           </Button>
-        ): ""}
+        ) : (
+          ""
+        )}
       </div>
     </Container>
   );
