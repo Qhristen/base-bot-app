@@ -2,13 +2,24 @@
 
 import {
   ArcticonsCoinGold,
+  AutoBotIcon,
   LightBolt,
   MutitapIcon,
   RefillSpeedIcon,
 } from "@/assets/icons";
 import { TelegramContext } from "@/context/telegram-context";
-import { useUser } from "@/hooks/useUser";
+import {
+  getFullEnergy,
+  getTapGuru,
+  upadteMultitap,
+  updateChargeLimit,
+  updateRefillSpeed,
+} from "@/redux/feature/boost";
+import { fetchUser } from "@/redux/feature/user";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { formatCompactNumber } from "@/utils/formatNumber";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
 import CircularProgressBar from "../CircularProgressBar";
 import Container from "../container";
@@ -21,18 +32,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/Dialog";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-import { formatCompactNumber } from "@/utils/formatNumber";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import {
-  getFullEnergy,
-  getTapGuru,
-  upadteMultitap,
-  updateChargeLimit,
-  updateRefillSpeed,
-} from "@/redux/feature/boost";
-import { fetchUser } from "@/redux/feature/user";
 
 const Boost = () => {
   const { user, webApp } = useContext(TelegramContext);
@@ -363,6 +362,8 @@ const Boost = () => {
                 </Dialog>
               </div>
             </div>
+
+
             <div className="my-5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -437,6 +438,81 @@ const Boost = () => {
                 </Dialog>
               </div>
             </div>
+
+            <div className="my-5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center p-2 w-10 h-10 rounded-full bg-gray">
+                    <Image src={AutoBotIcon} alt="LightBolt" />
+                  </div>
+                  <div className="text-white">
+                    <h4 className="font-medium text-white">Auto tap bot</h4>
+                    <div className="flex items-center gap-2 font-normal text-white">
+                      <div className="flex items-center gap-0 text-white">
+                        <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
+                        <span>500 000</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <Dialog>
+                  <DialogTrigger className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
+                    Open
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Auto tap bot</DialogTitle>
+                      <div className="flex items-center justify-center py-4">
+                        <div className="flex items-center justify-center p-2 w-10 h-10 rounded-full bg-gray">
+                          <Image src={AutoBotIcon} alt="LightBolt" />
+                        </div>
+                      </div>
+                      <div className="font-thin text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="flex items-center gap-0 text-white">
+                            <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
+                            <span>500 000</span>
+                          </div>
+                          {/* <div className="flex items-center gap-0">
+                            <div className="flex items-center justify-center w-4 h-4 rounded-full p-0.5 bg-white text-black">
+                              {userData?.refillLevel}
+                            </div>
+                            <span className="p-1">Level</span>
+                          </div> */}
+                        </div>
+                      </div>
+                      <DialogDescription className="font-thin text-center">
+                        Increase the number of bop with Auto bot
+                      </DialogDescription>
+                    </DialogHeader>
+                    <Button
+                      // onClick={() => {
+                      //   if (userData && userData?.totalPoint >= userData?.refillPoint) {
+                      //     dispatch(
+                      //       updateRefillSpeed({
+                      //         userId: String(user?.id),
+                      //         speed: Number(userData?.refillSpeed) + 1,
+                      //         point: Number(userData?.refillPoint),
+                      //       })
+                      //     );
+                      //     router.push(`/mobile/tap`);
+                      //   } else {
+                      //     webApp?.showAlert(
+                      //       "You do not have enough point to refill speed."
+                      //     );
+                      //   }
+                      // }}
+                      className="w-full"
+                      variant={`primary`}
+                      size={`lg`}
+                    >
+                      Purchase
+                    </Button>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
