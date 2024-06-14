@@ -82,7 +82,7 @@ const Tap = () => {
   const handleCoinTap = useCallback(
     (event: React.TouchEvent<HTMLImageElement>) => {
       event.preventDefault();
-      if (miningInfo.limit !== 0) {
+      if (miningInfo.limit > 0) {
         // audio.play();
 
         const touchPoints = Array.from(event.touches)

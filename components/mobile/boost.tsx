@@ -327,7 +327,7 @@ const Boost = () => {
                             <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
                             <span>
                               {userData &&
-                                userData?.max * 2 + userData?.max / 2}
+                                userData?.max * 2}
                             </span>
                           </div>
                           <div className="flex items-center gap-0">
