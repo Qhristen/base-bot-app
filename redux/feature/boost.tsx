@@ -85,7 +85,10 @@ export const getFullEnergy = createAsyncThunk(
 
 export const upadteMultitap = createAsyncThunk(
   "boost/upadteMultitap",
-  async ({ userId, point }: { userId: string, point:number }, { rejectWithValue }) => {
+  async (
+    { userId, point }: { userId: string; point: number },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await AxiosBaseUrl.patch(`/user/${userId}/multitap`, {
         point,
@@ -99,7 +102,6 @@ export const upadteMultitap = createAsyncThunk(
     }
   }
 );
-
 
 export const updateChargeLimit = createAsyncThunk(
   "boost/updateChargeLimit",
@@ -149,6 +151,46 @@ export const updateRefillSpeed = createAsyncThunk(
   }
 );
 
+export const purchaseAutoBot = createAsyncThunk(
+  "boost/purchaseAutoBot",
+  async (
+    { userId, point }: { userId: string; point: number},
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await AxiosBaseUrl.post(`/user/buy-auto-bot/${userId}`, {
+        point,
+      });
+      return response.data.data.user;
+    } catch (error) {
+      if (!error) {
+        throw error;
+      }
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const claimAutoBotPoints = createAsyncThunk(
+  "boost/claimAutoBotPoints",
+  async (
+    { userId, point }: { userId: string; point: number},
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await AxiosBaseUrl.post(`/user/claim/auto-bot-point/${userId}`, {
+        point,
+      });
+      return response.data.data.user;
+    } catch (error) {
+      if (!error) {
+        throw error;
+      }
+      return rejectWithValue(error);
+    }
+  }
+); 
+
 export const boostSlice = createSlice({
   initialState,
   name: "boostSlice",
@@ -167,11 +209,32 @@ export const boostSlice = createSlice({
         state.status = "success";
         state.multitap = action.payload;
       })
+      .addCase(upadteMultitap.pending, (state, action) => {
+        state.status = "loading";
+      })
       .addCase(updateChargeLimit.fulfilled, (state, action) => {
         state.status = "success";
       })
+      .addCase(updateChargeLimit.pending, (state, action) => {
+        state.status = "loading";
+      })
       .addCase(updateRefillSpeed.fulfilled, (state, action) => {
         state.status = "success";
+      })
+      .addCase(updateRefillSpeed.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(claimAutoBotPoints.fulfilled, (state, action) => {
+        state.status = "success";
+      })
+      .addCase(claimAutoBotPoints.pending, (state, action) => {
+        state.status = "laoding";
+      })
+      .addCase(purchaseAutoBot.fulfilled, (state, action) => {
+        state.status = "success";
+      })
+      .addCase(purchaseAutoBot.pending, (state, action) => {
+        state.status = "loading";
       });
   },
 });

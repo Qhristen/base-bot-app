@@ -1,25 +1,27 @@
 import { Badge, User } from "@/types";
+import { getLocalStorage, setLocalStorage } from "@/utils/local-storage-mgt";
 import AxiosBaseUrl from "@/utils/services/axios-base-config";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
+  claimAutoBotPoints,
   getFullEnergy,
   getTapGuru,
   upadteMultitap,
   updateChargeLimit,
   updateRefillSpeed,
 } from "./boost";
-import { stat } from "fs";
-import { clamp } from "@/utils/clamp-numbers";
+import { claimLeaguePoint } from "./task";
 
 interface MiningInfo {
   limit: number;
   perClick: number;
-  status?: "idle" | "mining" | "stop";
+  status?: string;
   max: number;
 }
 
 interface IUserState {
   user: User | null;
+  userReferals: User[];
   badges: Badge[] | null;
   isAuth: Boolean;
   status: string;
@@ -35,13 +37,27 @@ interface IUserState {
   }[];
 }
 
+const MiningInfoLs = getLocalStorage("user_mininginfo");
+const miningInfo = !!MiningInfoLs
+  ? (JSON.parse(MiningInfoLs as string) as MiningInfo)
+  : {
+      limit: 50,
+      perClick: 1,
+      max: 50,
+    };
+
 const initialState: IUserState = {
   user: null,
+  userReferals: [],
   isAuth: false,
   status: "idle",
   pointCount: 0,
   counter: 0,
-  miningInfo: { limit: 100, perClick: 1, status: "idle", max: 100 }, // Initialize with some default values
+  miningInfo: {
+    limit: 0,
+    perClick: 0,
+    max: 0,
+  }, // Initialize with some default values
   isPressed: false,
   textPoints: [],
   badges: [],
@@ -53,6 +69,20 @@ export const fetchUser = createAsyncThunk(
     try {
       const response = await AxiosBaseUrl.get(`/user/${userId}`);
       return response.data?.data?.user;
+    } catch (error) {
+      if (!error) {
+        throw error;
+      }
+      return rejectWithValue(error);
+    }
+  }
+);
+export const fetchUserReferals = createAsyncThunk(
+  "user/fetchUserReferals",
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      const response = await AxiosBaseUrl.get(`/user/referals/${userId}`);
+      return response.data?.data?.referals;
     } catch (error) {
       if (!error) {
         throw error;
@@ -108,6 +138,10 @@ export const fetchBadges = createAsyncThunk("user/badges", async () => {
   return response.data.badges;
 });
 
+const updateMiningInfoInLocalStorage = (miningInfo: MiningInfo) => {
+  setLocalStorage("user_mininginfo", miningInfo);
+};
+
 export const userSlice = createSlice({
   initialState,
   name: "userSlice",
@@ -121,6 +155,9 @@ export const userSlice = createSlice({
     },
     incrementPoints(state, action: PayloadAction<number>) {
       state.pointCount += action.payload;
+      // updateMiningInfoInLocalStorage({
+      //   ...state.miningInfo,
+      // });
     },
     updateTapguru(state) {
       if (state.miningInfo.limit !== 0) {
@@ -128,11 +165,16 @@ export const userSlice = createSlice({
           ...state.miningInfo,
           perClick: Number(state?.user?.perclick) * 5,
         };
+        // updateMiningInfoInLocalStorage({
+        //   ...state.miningInfo,
+        //   perClick: Number(state?.user?.perclick) * 5,
+        // });
       }
     },
     updateMiningInfo(state, action: PayloadAction<Partial<MiningInfo>>) {
       state.miningInfo = { ...state.miningInfo, ...action.payload };
       // state.pointCount += action?.payload?.perClick;
+      // updateMiningInfoInLocalStorage({...state.miningInfo});
     },
     addTextPoints(
       state,
@@ -151,12 +193,11 @@ export const userSlice = createSlice({
     incrementMiningLimit(state, action) {
       if (state.miningInfo.limit < state.miningInfo.max) {
         state.miningInfo.limit += action.payload;
-      }
-      if (
-        state.miningInfo.limit === state.miningInfo.max &&
-        state.miningInfo.limit !== state.miningInfo.max
-      ) {
-        state.miningInfo.limit = state.miningInfo.max;
+
+        if (state.miningInfo.limit > state.miningInfo.max) {
+          state.miningInfo.limit = state.miningInfo.max;
+        }
+        // updateMiningInfoInLocalStorage(state.miningInfo);
       }
     },
   },
@@ -165,16 +206,25 @@ export const userSlice = createSlice({
       .addCase(fetchUser.pending, (state, action) => {
         state.status = "loading";
       })
-
       .addCase(fetchUser.fulfilled, (state, action: PayloadAction<User>) => {
         state.status = "success";
         state.user = action.payload;
         state.pointCount = action.payload.totalPoint;
         state.miningInfo = {
+          ...state.miningInfo,
           limit: action.payload.limit,
           max: action.payload.max,
           perClick: action.payload.perclick,
         };
+
+        // updateMiningInfoInLocalStorage({
+        //   limit:
+        //   state.miningInfo.limit < state.miningInfo.max
+        //     ? state.miningInfo.limit
+        //     : action.payload.limit,
+        // max: action.payload.max,
+        // perClick: action.payload.perclick,
+        // });
       })
       .addCase(updateScore.pending, (state, action) => {
         state.pointCount += state.miningInfo.perClick;
@@ -185,6 +235,13 @@ export const userSlice = createSlice({
       .addCase(getTapGuru.pending, (state, action) => {
         state.status = "loading";
       })
+      .addCase(claimLeaguePoint.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(claimAutoBotPoints.fulfilled, (state, action) => {
+        state.status = "success";
+        state.user = action.payload;
+      })
       .addCase(getTapGuru.fulfilled, (state, action: PayloadAction<User>) => {
         state.status = "success";
         state.miningInfo = {
@@ -192,6 +249,11 @@ export const userSlice = createSlice({
           limit: Math.max(0, state.miningInfo.limit),
           perClick: state.miningInfo.perClick * 5,
         };
+        // updateMiningInfoInLocalStorage({
+        //   ...state.miningInfo,
+        //   limit: state.miningInfo.limit,
+        //   perClick: state.miningInfo.perClick * 5,
+        // });
       })
       .addCase(updateRefillSpeed.pending, (state, action) => {
         state.status = "loading";
@@ -207,6 +269,10 @@ export const userSlice = createSlice({
         state.status = "success";
         state.badges = action.payload;
       })
+      .addCase(fetchUserReferals.fulfilled, (state, action) => {
+        state.status = "success";
+        state.userReferals = action.payload;
+      })
       .addCase(upadteMultitap.pending, (state, action) => {
         state.status = "loading";
       })
@@ -218,6 +284,11 @@ export const userSlice = createSlice({
             ...state.miningInfo,
             perClick: action.payload.perclick,
           };
+
+          // updateMiningInfoInLocalStorage({
+          //   ...state.miningInfo,
+          //   perClick: action.payload.perclick,
+          // });
         }
       )
       .addCase(updateChargeLimit.pending, (state, action) => {
@@ -232,11 +303,16 @@ export const userSlice = createSlice({
             limit: action.payload.limit,
             max: action.payload.max,
           };
+          // updateMiningInfoInLocalStorage({
+          //   ...state.miningInfo,
+          //   limit: action.payload.limit,
+          //   max: action.payload.max,
+          // });
         }
       )
-      .addCase(getFullEnergy.pending, (state, action) => {
-        state.status = "loading";
-      })
+      // .addCase(getFullEnergy.pending, (state, action) => {
+      //   state.status = "loading";
+      // })
       .addCase(
         getFullEnergy.fulfilled,
         (state, action: PayloadAction<User>) => {
@@ -246,6 +322,12 @@ export const userSlice = createSlice({
             max: action.payload.max,
             perClick: action.payload.perclick,
           };
+          // updateMiningInfoInLocalStorage({
+          //   ...state.miningInfo,
+          //   limit: action.payload.limit,
+          //   max: action.payload.max,
+          //   perClick: action.payload.perclick,
+          // });
         }
       );
   },

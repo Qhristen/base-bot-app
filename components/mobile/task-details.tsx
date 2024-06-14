@@ -134,7 +134,7 @@ const TaskDetails = ({ taskId }: ITask) => {
                     dispatch(fetchAlluserTask());
                     dispatch(fetchSingleSpecialActivity(taskId));
                     webApp?.openLink(`${activity.link}`);
-                    router.push(`/mobile/task`);
+                    // router.push(`/single-task/${singleSpecialTask?.id}`);
                     // webApp?.BackButton.show();
                   }}
                   size={`sm`}

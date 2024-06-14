@@ -21,3 +21,4 @@ export { default as ThreePeople } from "./threeppl.png";
 export { default as SpecialTaskIcon } from "./specialTask.png";
 export { default as MutitapIcon } from "./MutitapIcon.png";
 export { default as RefillSpeedIcon } from "./guidance_refill-for-water-bottle.png";
+export { default as AutoBotIcon } from "./bxs_bot.png";

@@ -8,24 +8,20 @@ import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import Container from "../container";
 import { Button } from "../ui/Button";
+import CircularProgressBar from "../CircularProgressBar";
 
 const Welcome = () => {
   const { webApp, user } = useContext(TelegramContext);
   const router = useRouter();
-  const [hasSeenPage, setHasSeenPage] = useState(false);
 
   useEffect(() => {
     const hasSeenPage = localStorage.getItem("hasSeenPage");
     if (hasSeenPage) {
       router.push(`/mobile/tap`);
-    }else{
-      setHasSeenPage(true)
     }
     webApp?.expand();
-  }, [webApp]);
+  }, [router, webApp]);
 
-
-  
   return (
     <Container>
       <div className="flex w-full h-full flex-col justify-between text-white p-5 mb-40">

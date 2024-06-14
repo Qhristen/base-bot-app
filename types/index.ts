@@ -119,6 +119,8 @@ export interface User {
   totalPoint: number;
   limit: number;
   refillSpeed: number;
+  autoBotpoints: number;
+  autobot: boolean;
   touches: number;
   max: number;
   fullEnergy: Response;

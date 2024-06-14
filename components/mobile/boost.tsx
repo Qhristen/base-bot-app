@@ -9,8 +9,10 @@ import {
 } from "@/assets/icons";
 import { TelegramContext } from "@/context/telegram-context";
 import {
+  claimAutoBotPoints,
   getFullEnergy,
   getTapGuru,
+  purchaseAutoBot,
   upadteMultitap,
   updateChargeLimit,
   updateRefillSpeed,
@@ -38,12 +40,13 @@ const Boost = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { user: userData, status } = useAppSelector((state) => state.user);
+  const { status: boostStatus } = useAppSelector((state) => state.boost);
 
   useEffect(() => {
     dispatch(fetchUser(String(user?.id)));
   }, [dispatch, webApp, user]);
 
-  if (status === "loading")
+  if (status === "loading" || boostStatus === "loading")
     return (
       <CircularProgressBar
         percentage={10}
@@ -260,14 +263,17 @@ const Boost = () => {
                     </DialogHeader>
                     <Button
                       onClick={() => {
-                        if (userData && userData?.totalPoint >= userData?.multiTapPoint) {
+                        if (
+                          userData &&
+                          userData?.totalPoint >= userData?.multiTapPoint
+                        ) {
                           dispatch(
                             upadteMultitap({
                               userId: String(user?.id),
                               point: Number(userData?.multiTapPoint) * 2,
                             })
                           );
-                          router.push(`/mobile/tap`);
+                          dispatch(fetchUser(String(user?.id)));
                         } else {
                           webApp?.showAlert(
                             "You do not have enough point to update multi bop."
@@ -295,8 +301,10 @@ const Boost = () => {
                     <div className="flex items-center gap-2 font-normal text-white">
                       <div className="flex items-center gap-0 text-white">
                         <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                        <span> {userData &&
-                                userData?.max * 2 + userData?.max / 2}</span>
+                        <span>
+                          {" "}
+                          {userData && userData?.max * 2 + userData?.max / 2}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -345,7 +353,7 @@ const Boost = () => {
                               point: Number(userData?.max),
                             })
                           );
-                          router.push(`/mobile/tap`);
+                          dispatch(fetchUser(String(user?.id)));
                         } else {
                           webApp?.showAlert(
                             "You do not have enough point to increase charge limit."
@@ -362,7 +370,6 @@ const Boost = () => {
                 </Dialog>
               </div>
             </div>
-
 
             <div className="my-5">
               <div className="flex items-center justify-between">
@@ -413,7 +420,10 @@ const Boost = () => {
                     </DialogHeader>
                     <Button
                       onClick={() => {
-                        if (userData && userData?.totalPoint >= userData?.refillPoint) {
+                        if (
+                          userData &&
+                          userData?.totalPoint >= userData?.refillPoint
+                        ) {
                           dispatch(
                             updateRefillSpeed({
                               userId: String(user?.id),
@@ -421,7 +431,7 @@ const Boost = () => {
                               point: Number(userData?.refillPoint),
                             })
                           );
-                          router.push(`/mobile/tap`);
+                          dispatch(fetchUser(String(user?.id)));
                         } else {
                           webApp?.showAlert(
                             "You do not have enough point to refill speed."
@@ -455,8 +465,15 @@ const Boost = () => {
                     </div>
                   </div>
                 </div>
-                <Dialog>
-                  <DialogTrigger className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
+                <Dialog
+                  defaultOpen={
+                    userData && userData?.autoBotpoints > 0 ? true : false
+                  }
+                >
+                  <DialogTrigger
+                    disabled={userData?.autobot}
+                    className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:pointer-events-none disabled:opacity-50"
+                  >
                     Open
                   </DialogTrigger>
                   <DialogContent>
@@ -471,13 +488,18 @@ const Boost = () => {
                         <div className="flex items-center justify-center gap-2">
                           <div className="flex items-center gap-0 text-white">
                             <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                            <span>500 000</span>
+                            <span>
+                              {" "}
+                              {userData?.autobot
+                                ? userData?.autoBotpoints
+                                : `500 000`}
+                            </span>
                           </div>
                           {/* <div className="flex items-center gap-0">
                             <div className="flex items-center justify-center w-4 h-4 rounded-full p-0.5 bg-white text-black">
-                              {userData?.refillLevel}
+                              {userData?.autoBotpoints}
                             </div>
-                            <span className="p-1">Level</span>
+                            <span className="p-1"></span>
                           </div> */}
                         </div>
                       </div>
@@ -485,34 +507,63 @@ const Boost = () => {
                         Increase the number of bop with Auto bot
                       </DialogDescription>
                     </DialogHeader>
-                    <Button
-                      // onClick={() => {
-                      //   if (userData && userData?.totalPoint >= userData?.refillPoint) {
-                      //     dispatch(
-                      //       updateRefillSpeed({
-                      //         userId: String(user?.id),
-                      //         speed: Number(userData?.refillSpeed) + 1,
-                      //         point: Number(userData?.refillPoint),
-                      //       })
-                      //     );
-                      //     router.push(`/mobile/tap`);
-                      //   } else {
-                      //     webApp?.showAlert(
-                      //       "You do not have enough point to refill speed."
-                      //     );
-                      //   }
-                      // }}
-                      className="w-full"
-                      variant={`primary`}
-                      size={`lg`}
-                    >
-                      Purchase
-                    </Button>
+
+                    {userData?.autobot ? (
+                      <Button
+                        onClick={() => {
+                          if (userData && userData?.autoBotpoints > 0) {
+                            dispatch(
+                              claimAutoBotPoints({
+                                userId: String(user?.id),
+                                point: userData.autoBotpoints,
+                              })
+                            );
+                            dispatch(fetchUser(String(user?.id)));
+
+                          } else {
+                            webApp?.showAlert(
+                              "You do not have enough Auto bot point to claim."
+                            );
+                          }
+                        }}
+                        className="w-full"
+                        variant={`primary`}
+                        size={`lg`}
+                        disabled={
+                          userData && userData?.autoBotpoints > 0 ? false : true
+                        }
+                      >
+                        Claim points
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => {
+                          if (userData && userData?.totalPoint >= 500000) {
+                            dispatch(
+                              purchaseAutoBot({
+                                userId: String(user?.id),
+                                point: 500000,
+                              })
+                            );
+                            dispatch(fetchUser(String(user?.id)));
+
+                          } else {
+                            webApp?.showAlert(
+                              "You do not have enough point to purchase Auto bot."
+                            );
+                          }
+                        }}
+                        className="w-full"
+                        variant={`primary`}
+                        size={`lg`}
+                      >
+                        Purchase
+                      </Button>
+                    )}
                   </DialogContent>
                 </Dialog>
               </div>
             </div>
-
           </div>
         </div>
       </div>

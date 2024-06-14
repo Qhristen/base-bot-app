@@ -9,17 +9,22 @@ import {
   incrementMiningLimit,
   removePoint,
   setIsPressed,
+  updateLimit,
   updateMiningInfo,
   updateScore,
-  updateTapguru
+  updateTapguru,
 } from "@/redux/feature/user";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { formatCompactNumber } from "@/utils/formatNumber";
 import Image from "next/image";
-import { useCallback, useContext, useEffect, useMemo } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import CircularProgressBar from "../CircularProgressBar";
 import Container from "../container";
 import { Progress } from "../ui/ProgressBar";
+import { TapGuruImage } from "@/assets/images";
+import intervalService from "@/utils/IntervalService";
+import { getLocalStorage } from "@/utils/local-storage-mgt";
+import TapGuruAnimation from "../tap-guru-animation";
 
 const Tap = () => {
   const { user, webApp } = useContext(TelegramContext);
@@ -38,25 +43,22 @@ const Tap = () => {
   }, [dispatch, webApp, user]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (miningInfo.limit < miningInfo.max) {
-        dispatch(incrementMiningLimit(userData?.refillSpeed));
-        // dispatch(
-        //   updateLimit({
-        //     max: Number(miningInfo?.max),
-        //     min: Number(miningInfo?.limit),
-        //     userId: String(user?.id),
-        //   })
-        // );
-      } else {
-        clearInterval(interval);
-      }
-    }, 1000);
-
+    if (miningInfo.limit < miningInfo.max) {
+      intervalService.startInterval(Number(userData?.refillSpeed));
+    } else {
+      intervalService.stopInterval();
+    }
     return () => {
-      clearInterval(interval);
+      // intervalService.stopInterval();// dispatch(
+      dispatch(
+        updateLimit({
+          max: Number(miningInfo?.max),
+          min: Number(miningInfo?.limit),
+          userId: String(user?.id),
+        })
+      );
     };
-  }, [dispatch, miningInfo, user?.id]);
+  }, [intervalService, miningInfo, userData?.refillSpeed]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -84,7 +86,7 @@ const Tap = () => {
         // audio.play();
 
         const touchPoints = Array.from(event.touches)
-          .slice(0, 5)
+          .slice(0, 10)
           .map((touch, index) => ({
             id: index,
             identifier: touch.identifier,
@@ -92,22 +94,23 @@ const Tap = () => {
             clientY: touch.clientY,
           }));
 
+        // dispatch(incrementPoints(miningInfo.perClick));
         dispatch(addTextPoints(touchPoints));
         dispatch(setIsPressed(true));
         dispatch(
           updateMiningInfo({
-            limit: Math.max(0, miningInfo.limit - miningInfo.perClick),
+            limit: miningInfo.limit - miningInfo.perClick,
             status: "mining",
           })
         );
-        // dispatch(incrementPoints(miningInfo.perClick));
+
         dispatch(
           updateScore({
             userId: String(user?.id),
             point: miningInfo.perClick,
           })
         );
-        // touchPoints.forEach((touch) => {
+        //   touchPoints.forEach((touch) => {
         // });
       } else {
         dispatch(updateMiningInfo({ status: "stop" }));
@@ -202,11 +205,10 @@ const Tap = () => {
             src={BaseLogoSm}
             style={{ transform: transformStyle }}
           />
-          {/* {userData?.tapGuru?.active && (
-            <div className="absolute z-10">
-              <Image alt="guru" className="" src={TapGuruImage} />
-            </div>
-          )} */}
+          {userData && userData?.perclick * 5 === miningInfo.perClick && (
+            <TapGuruAnimation />
+          )}
+
           {textPoints.map((point) => (
             <div
               key={point.id}

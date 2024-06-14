@@ -12,7 +12,7 @@ import {
 } from "@/assets/icons";
 import { TelegramContext } from "@/context/telegram-context";
 import { useUser } from "@/hooks/useUser";
-import { League_Task, Ref_Task, SpecialTask } from "@/types";
+import { League_Task, Ref_Task, SpecialTask, User } from "@/types";
 import { formatCompactNumber } from "@/utils/formatNumber";
 import { getImageForUserLevel } from "@/utils/userLevel";
 import axios from "axios";
@@ -35,6 +35,7 @@ import {
   fetchSpecialTask,
 } from "@/redux/feature/task";
 import { fetchUser } from "@/redux/feature/user";
+import Referrals from "./referrals";
 
 const Task = () => {
   const { user, webApp } = useContext(TelegramContext);
@@ -123,6 +124,7 @@ const Task = () => {
             <TabsTrigger value="special">Special</TabsTrigger>
             <TabsTrigger value="leagues">Leagues</TabsTrigger>
             <TabsTrigger value="ref">Ref Tasks</TabsTrigger>
+            <TabsTrigger value="referral">Refferrals</TabsTrigger>
           </TabsList>
           <TabsContent value="special">
             <div className="bg-gray rounded-2xl p-3">
@@ -214,52 +216,6 @@ const Task = () => {
             </div>
           </TabsContent>
           <TabsContent value="ref">
-            <div
-              onClick={() => onCopy(userData?.referralLink as string)}
-              className="bg-gray rounded-2xl mb-4 p-4"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
-                    <MoneyBagColoredIcon className="scale-75" />
-                  </div>
-                  <div className="text-white">
-                    <h4 className="font-normal text-white">Invite bonus</h4>
-                    <div className="flex items-center gap-2 font-normal text-white">
-                      <span className="text-sm">
-                        Up to <span className="font-bold">25 00 </span>for a
-                        friend
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <ShareIcon />
-              </div>
-            </div>
-            <div
-              onClick={() => onCopy(userData?.referralLink as string)}
-              className="bg-gray rounded-2xl mb-4 p-4"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray">
-                    <MoneyBagColoredIcon className="scale-75" />
-                  </div>
-                  <div className="text-white">
-                    <h4 className="font-normal text-white">
-                      Invite a premium user
-                    </h4>
-                    <div className="flex items-center gap-2 font-normal text-white">
-                      <span className="text-sm">
-                        Up to <span className="font-bold">50 000 </span>for an
-                        invite
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <ShareIcon />
-              </div>
-            </div>
             <div className="bg-gray rounded-2xl p-3">
               {refTask?.map((data, i) => {
                 const progress =
@@ -304,6 +260,8 @@ const Task = () => {
                             })
                           );
                           dispatch(fetchAlluserTask());
+                          dispatch(fetchUser(String(user?.id)));
+
                         }}
                         disabled={
                           data.totalInvite === userData?.friendsReferred
@@ -326,6 +284,9 @@ const Task = () => {
                 );
               })}
             </div>
+          </TabsContent>
+          <TabsContent value="referral">
+            <Referrals />
           </TabsContent>
         </Tabs>
       </div>
