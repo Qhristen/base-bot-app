@@ -467,7 +467,7 @@ const Boost = () => {
                 </div>
                 <Dialog
                   defaultOpen={
-                    userData && userData?.autoBotpoints > 0 ? true : false
+                    userData && userData?.autoBotpoints > 40000 ? true : false
                   }
                 >
                   <DialogTrigger
@@ -511,7 +511,7 @@ const Boost = () => {
                     {userData?.autobot ? (
                       <Button
                         onClick={() => {
-                          if (userData && userData?.autoBotpoints > 0) {
+                          if (userData && userData?.autoBotpoints >= 40000) {
                             dispatch(
                               claimAutoBotPoints({
                                 userId: String(user?.id),
@@ -530,7 +530,7 @@ const Boost = () => {
                         variant={`primary`}
                         size={`lg`}
                         disabled={
-                          userData && userData?.autoBotpoints > 0 ? false : true
+                          userData && userData?.autoBotpoints > 40000 ? false : true
                         }
                       >
                         Claim points

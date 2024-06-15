@@ -25,6 +25,7 @@ import { TapGuruImage } from "@/assets/images";
 import intervalService from "@/utils/IntervalService";
 import { getLocalStorage } from "@/utils/local-storage-mgt";
 import TapGuruAnimation from "../tap-guru-animation";
+import { getImageForUserLevel } from "@/utils/userLevel";
 
 const Tap = () => {
   const { user, webApp } = useContext(TelegramContext);
@@ -148,6 +149,10 @@ const Tap = () => {
     [dispatch]
   );
 
+  const userLeagueImage =
+  userData && getImageForUserLevel(`${userData?.league.toLowerCase()}`);
+
+
   const transformStyle = useMemo(() => {
     if (!isPressed || !textPoints[0]) return "none";
     return `perspective(500px) rotateX(${
@@ -182,12 +187,12 @@ const Tap = () => {
               value={(miningInfo.limit / miningInfo.max) * 100}
             />
           </div>
-          <div className="flex items-center gap-2 border border-white px-3 py-2 rounded-xl">
-            {/* <div className="w-4 h-4">
-              <Image src={`${userLeagueImage}`} alt="novice" />
-            </div> */}
-            <h2 className="text-white select-none">Connect wallet</h2>
-          </div>
+          <div className="flex items-center gap-2 bg-gray px-3 py-2 rounded-xl">
+              <div className="w-7 h-7">
+                <Image src={`${userLeagueImage}`} alt="novice" />
+              </div>
+              <h2 className="text-white capitalize">{userData?.league}</h2>
+            </div>
         </div>
 
         <div className="flex flex-col items-center justify-center select-none mt-10">

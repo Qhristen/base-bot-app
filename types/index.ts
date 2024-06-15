@@ -142,6 +142,12 @@ export interface Response {
   min: number;
 }
 
+export interface Referals {
+  referredFrom: User;
+  referredTo:   User;
+  point:        number;
+}
+
 export interface Badge {
   name:   string;
   points: number;

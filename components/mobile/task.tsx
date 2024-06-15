@@ -82,7 +82,10 @@ const Task = () => {
     if (!userTasks) return;
 
     const checkTask = userTasks.find(
-      (userT) => userT.taskId === taskId && userT.type === "ref"
+      (userT) =>
+        userT.taskId === taskId &&
+        userT.type === "ref" &&
+        userT.userId === String(user?.id)
     );
 
     return checkTask ? true : false;
@@ -124,7 +127,7 @@ const Task = () => {
             <TabsTrigger value="special">Special</TabsTrigger>
             <TabsTrigger value="leagues">Leagues</TabsTrigger>
             <TabsTrigger value="ref">Ref Tasks</TabsTrigger>
-            <TabsTrigger value="referral">Refferrals</TabsTrigger>
+            <TabsTrigger value="referral">Referrals</TabsTrigger>
           </TabsList>
           <TabsContent value="special">
             <div className="bg-gray rounded-2xl p-3">
@@ -261,14 +264,10 @@ const Task = () => {
                           );
                           dispatch(fetchAlluserTask());
                           dispatch(fetchUser(String(user?.id)));
-
                         }}
                         disabled={
-                          data.totalInvite === userData?.friendsReferred
-                            ? isCompletedRefTask(data.id)
-                              ? true
-                              : false
-                            : true
+                          data.totalInvite === userData?.friendsReferred ||
+                          !isCompletedRefTask(data.id)
                         }
                         size={`sm`}
                         variant={`primary`}

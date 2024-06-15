@@ -1,4 +1,4 @@
-import { Badge, User } from "@/types";
+import { Badge, Referals, User } from "@/types";
 import { getLocalStorage, setLocalStorage } from "@/utils/local-storage-mgt";
 import AxiosBaseUrl from "@/utils/services/axios-base-config";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -21,7 +21,7 @@ interface MiningInfo {
 
 interface IUserState {
   user: User | null;
-  userReferals: User[];
+  userReferals: Referals[];
   badges: Badge[] | null;
   isAuth: Boolean;
   status: string;
@@ -82,7 +82,7 @@ export const fetchUserReferals = createAsyncThunk(
   async (userId: string, { rejectWithValue }) => {
     try {
       const response = await AxiosBaseUrl.get(`/user/referals/${userId}`);
-      return response.data?.data?.referals;
+      return response.data?.data;
     } catch (error) {
       if (!error) {
         throw error;

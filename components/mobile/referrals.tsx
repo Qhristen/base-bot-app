@@ -52,19 +52,19 @@ const Referrals = () => {
       </div>
       <p className="text-gray-light py-4">
         Invite a friend with Telegram Premium and earn additional{" "}
-        <span className="font-semibold text-white">+25 000</span> for you and
+        <span className="font-semibold text-white">+50 000</span> for you and
         your friend.
       </p>
       <h1 className="text-2xl font-medium text-white py-4">My Referrals</h1>
 
       {userReferals.map((referral, i) => (
         <div key={i}>
-          <h4 className="font-bold text-white">{referral.telegramUserName}</h4>
+          <h4 className="font-bold text-white">{referral.referredTo.telegramUserName}</h4>
           <div className="flex items-center justify-between text-white">
             <span>
-              {referral.league} | {referral.totalPoint}
+              {referral.referredTo.league} | {referral.referredTo.totalPoint}
             </span>
-            <span>+25 000</span>
+            <span>+{referral.point}</span>
           </div>
         </div>
       ))}
