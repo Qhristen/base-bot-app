@@ -6,26 +6,24 @@ import { TelegramContext } from "@/context/telegram-context";
 import {
   addTextPoints,
   fetchUser,
-  incrementMiningLimit,
   removePoint,
   setIsPressed,
   updateLimit,
   updateMiningInfo,
   updateScore,
-  updateTapguru,
+  updateTapguru
 } from "@/redux/feature/user";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { formatCompactNumber } from "@/utils/formatNumber";
+import intervalService from "@/utils/IntervalService";
+import { getImageForUserLevel } from "@/utils/userLevel";
+import { motion } from "framer-motion";
 import Image from "next/image";
-import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
+import { useCallback, useContext, useEffect, useMemo } from "react";
 import CircularProgressBar from "../CircularProgressBar";
 import Container from "../container";
-import { Progress } from "../ui/ProgressBar";
-import { TapGuruImage } from "@/assets/images";
-import intervalService from "@/utils/IntervalService";
-import { getLocalStorage } from "@/utils/local-storage-mgt";
 import TapGuruAnimation from "../tap-guru-animation";
-import { getImageForUserLevel } from "@/utils/userLevel";
+import { Progress } from "../ui/ProgressBar";
 
 const Tap = () => {
   const { user, webApp } = useContext(TelegramContext);
@@ -38,6 +36,7 @@ const Tap = () => {
     status,
     pointCount,
   } = useAppSelector((state) => state.user);
+
 
   useEffect(() => {
     dispatch(fetchUser(String(user?.id)));
@@ -96,23 +95,23 @@ const Tap = () => {
           }));
 
         // dispatch(incrementPoints(miningInfo.perClick));
-        dispatch(addTextPoints(touchPoints));
-        dispatch(setIsPressed(true));
-        dispatch(
-          updateMiningInfo({
-            limit: miningInfo.limit - miningInfo.perClick,
-            status: "mining",
-          })
-        );
-
-        dispatch(
-          updateScore({
-            userId: String(user?.id),
-            point: miningInfo.perClick,
-          })
-        );
-        //   touchPoints.forEach((touch) => {
-        // });
+        
+        touchPoints.forEach((touch) => {
+          dispatch(addTextPoints(touchPoints));
+          dispatch(setIsPressed(true));
+          dispatch(
+            updateMiningInfo({
+              limit: miningInfo.limit - miningInfo.perClick,
+              status: "mining",
+            })
+          );
+          dispatch(
+            updateScore({
+              userId: String(user?.id),
+              point: miningInfo.perClick,
+            })
+          );
+        });
       } else {
         dispatch(updateMiningInfo({ status: "stop" }));
         webApp?.showAlert("Mining limit reached, buy more refill speed.");
@@ -124,7 +123,7 @@ const Tap = () => {
   const handleTouchEnd = (event: React.TouchEvent<HTMLImageElement>) => {
     const endedTouches = Array.from(event.touches);
 
-    const endedTouchPoints = endedTouches.map((touch, index) => ({
+    const endedTouchPoints = endedTouches.slice(0, 10).map((touch, index) => ({
       id: index,
       identifier: touch.identifier,
       clientX: touch.clientX,
@@ -150,8 +149,7 @@ const Tap = () => {
   );
 
   const userLeagueImage =
-  userData && getImageForUserLevel(`${userData?.league.toLowerCase()}`);
-
+    userData && getImageForUserLevel(`${userData?.league.toLowerCase()}`);
 
   const transformStyle = useMemo(() => {
     if (!isPressed || !textPoints[0]) return "none";
@@ -188,18 +186,25 @@ const Tap = () => {
             />
           </div>
           <div className="flex items-center gap-2 bg-gray px-3 py-2 rounded-xl">
-              <div className="w-7 h-7">
-                <Image src={`${userLeagueImage}`} alt="novice" />
-              </div>
-              <h2 className="text-white capitalize">{userData?.league}</h2>
+            <div className="w-7 h-7">
+              <Image src={`${userLeagueImage}`} alt="novice" />
             </div>
+            <h2 className="text-white capitalize">{userData?.league}</h2>
+          </div>
         </div>
 
         <div className="flex flex-col items-center justify-center select-none mt-10">
           <div className="text-gray-light">My points</div>
-          <h1 className="text-4xl font-black text-white">
-            {formatCompactNumber(pointCount)}
-          </h1>
+          <motion.div
+            key={pointCount}
+            initial={{ scale: 1 }}
+            animate={{ scale: 1.25 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            <h1 className="text-4xl font-black text-white">
+              {formatCompactNumber(pointCount)}
+            </h1>
+          </motion.div>
         </div>
         <div className="relative flex items-center tabular-nums gap-0 justify-center mt-10 cursor-pointer overflow-hidden">
           <Image

@@ -121,6 +121,7 @@ export interface User {
   refillSpeed: number;
   autoBotpoints: number;
   autobot: boolean;
+  welcomePage: boolean;
   touches: number;
   max: number;
   fullEnergy: Response;

@@ -133,6 +133,24 @@ export const updateLimit = createAsyncThunk(
   }
 );
 
+export const welcomePageUpdate = createAsyncThunk(
+  "user/welcomePageUpdate",
+  async (
+    { userId }: { userId: string},
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await AxiosBaseUrl.post(`/user/welcome/${userId}`);
+      return response.data?.user;
+    } catch (error) {
+      if (!error) {
+        throw error;
+      }
+      return rejectWithValue(error);
+    }
+  }
+);
+
 export const fetchBadges = createAsyncThunk("user/badges", async () => {
   const response = await AxiosBaseUrl.get(`/users/badges`);
   return response.data.badges;
@@ -194,6 +212,9 @@ export const userSlice = createSlice({
       if (state.miningInfo.limit < state.miningInfo.max) {
         state.miningInfo.limit += action.payload;
 
+        if (state.miningInfo.limit <= 0) {
+          state.miningInfo.limit = 0;
+        }
         if (state.miningInfo.limit > state.miningInfo.max) {
           state.miningInfo.limit = state.miningInfo.max;
         }
@@ -232,6 +253,10 @@ export const userSlice = createSlice({
       .addCase(updateScore.fulfilled, (state, action) => {
         state.status = "success";
       })
+      .addCase(welcomePageUpdate.fulfilled, (state, action) => {
+        state.status = "success";
+        state.user = action.payload
+      })
       .addCase(getTapGuru.pending, (state, action) => {
         state.status = "loading";
       })
@@ -244,6 +269,7 @@ export const userSlice = createSlice({
       })
       .addCase(getTapGuru.fulfilled, (state, action: PayloadAction<User>) => {
         state.status = "success";
+        state.user = action.payload
         state.miningInfo = {
           ...state.miningInfo,
           limit: Math.max(0, state.miningInfo.limit),
@@ -273,13 +299,14 @@ export const userSlice = createSlice({
         state.status = "success";
         state.userReferals = action.payload;
       })
-      .addCase(upadteMultitap.pending, (state, action) => {
-        state.status = "loading";
-      })
+      // .addCase(upadteMultitap.pending, (state, action) => {
+      //   state.status = "loading";
+      // })
       .addCase(
         upadteMultitap.fulfilled,
         (state, action: PayloadAction<User>) => {
           state.status = "success";
+          state.user = action.payload;
           state.miningInfo = {
             ...state.miningInfo,
             perClick: action.payload.perclick,
@@ -298,6 +325,7 @@ export const userSlice = createSlice({
         updateChargeLimit.fulfilled,
         (state, action: PayloadAction<User>) => {
           state.status = "success";
+          state.user = action.payload
           state.miningInfo = {
             ...state.miningInfo,
             limit: action.payload.limit,
@@ -317,6 +345,7 @@ export const userSlice = createSlice({
         getFullEnergy.fulfilled,
         (state, action: PayloadAction<User>) => {
           state.status = "success";
+          state.user = action.payload
           state.miningInfo = {
             limit: action.payload.limit,
             max: action.payload.max,

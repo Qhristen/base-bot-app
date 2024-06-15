@@ -4,24 +4,38 @@ import { BaseLogoSm, TableUserFiled } from "@/assets/icons";
 import { TelegramContext } from "@/context/telegram-context";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import Container from "../container";
 import { Button } from "../ui/Button";
 import CircularProgressBar from "../CircularProgressBar";
 import { motion } from "framer-motion";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { fetchUser, welcomePageUpdate } from "@/redux/feature/user";
 
 const Welcome = () => {
   const { webApp, user } = useContext(TelegramContext);
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { user: userData, status } = useAppSelector((state) => state.user);
 
   useEffect(() => {
-    // const hasSeenPage = localStorage.getItem("hasSeenPage");
-    // if (hasSeenPage) {
-    //   router.push(`/mobile/tap`);
-    // }
+    dispatch(fetchUser(String(user?.id)));
     webApp?.expand();
-  }, [router, webApp]);
+  }, [dispatch, webApp, user]);
+
+
+  if (userData?.welcomePage) redirect(`/mobile/tap`)
+
+  if (status === "loading")
+    return (
+      <CircularProgressBar
+        percentage={10}
+        size={80}
+        strokeWidth={12}
+        color="white"
+      />
+    );
 
   return (
     <Container>
@@ -60,7 +74,7 @@ const Welcome = () => {
         >
           <Link href={`/mobile/tap`}>
             <Button
-              onClick={() => localStorage.setItem("hasSeenPage", "true")}
+              onClick={() => dispatch(welcomePageUpdate({userId: String(user?.id)}))}
               size={`lg`}
               className="w-full mt-20"
               variant={`primary`}
