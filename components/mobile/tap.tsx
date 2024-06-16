@@ -6,12 +6,13 @@ import { TelegramContext } from "@/context/telegram-context";
 import {
   addTextPoints,
   fetchUser,
+  incrementPoints,
   removePoint,
   setIsPressed,
   updateLimit,
   updateMiningInfo,
   updateScore,
-  updateTapguru
+  updateTapguru,
 } from "@/redux/feature/user";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { formatCompactNumber } from "@/utils/formatNumber";
@@ -24,6 +25,7 @@ import CircularProgressBar from "../CircularProgressBar";
 import Container from "../container";
 import TapGuruAnimation from "../tap-guru-animation";
 import { Progress } from "../ui/ProgressBar";
+import { debounce } from "lodash";
 
 const Tap = () => {
   const { user, webApp } = useContext(TelegramContext);
@@ -36,7 +38,6 @@ const Tap = () => {
     status,
     pointCount,
   } = useAppSelector((state) => state.user);
-
 
   useEffect(() => {
     dispatch(fetchUser(String(user?.id)));
@@ -94,24 +95,26 @@ const Tap = () => {
             clientY: touch.clientY,
           }));
 
-        // dispatch(incrementPoints(miningInfo.perClick));
-        
-        touchPoints.forEach((touch) => {
-          dispatch(addTextPoints(touchPoints));
-          dispatch(setIsPressed(true));
-          dispatch(
-            updateMiningInfo({
-              limit: miningInfo.limit - miningInfo.perClick,
-              status: "mining",
-            })
-          );
+        dispatch(addTextPoints(touchPoints));
+        dispatch(setIsPressed(true));
+        dispatch(
+          updateMiningInfo({
+            limit: miningInfo.limit - miningInfo.perClick,
+            status: "mining",
+          })
+        );
+        const perTap = miningInfo.perClick * touchPoints.length
+        dispatch(incrementPoints(perTap));
+        const debouncedUpdateScore = debounce(() => {
           dispatch(
             updateScore({
               userId: String(user?.id),
-              point: miningInfo.perClick,
+              point: perTap,
             })
           );
-        });
+        }, 1500);
+
+        debouncedUpdateScore();
       } else {
         dispatch(updateMiningInfo({ status: "stop" }));
         webApp?.showAlert("Mining limit reached, buy more refill speed.");
@@ -121,24 +124,7 @@ const Tap = () => {
   );
 
   const handleTouchEnd = (event: React.TouchEvent<HTMLImageElement>) => {
-    const endedTouches = Array.from(event.touches);
-
-    const endedTouchPoints = endedTouches.slice(0, 10).map((touch, index) => ({
-      id: index,
-      identifier: touch.identifier,
-      clientX: touch.clientX,
-      clientY: touch.clientY,
-    }));
-
-    endedTouchPoints.forEach((touch) => {
-      dispatch(setIsPressed(true));
-      dispatch(
-        updateScore({
-          userId: String(user?.id),
-          point: miningInfo.perClick,
-        })
-      );
-    });
+    dispatch(setIsPressed(true));
   };
 
   const handleRemovePoint = useCallback(
@@ -213,6 +199,7 @@ const Tap = () => {
             alt="logo"
             className="rounded-full z-20"
             src={BaseLogoSm}
+            aria-disabled={miningInfo.limit <= 0}
             style={{ transform: transformStyle }}
           />
           {userData && userData?.perclick * 5 === miningInfo.perClick && (
@@ -224,7 +211,7 @@ const Tap = () => {
               key={point.id}
               style={{
                 left: `${point.clientX - 50}px`,
-                top: `${point.clientY - 240}px`,
+                top: `${point.clientY - 200}px`,
                 zIndex: 60,
               }}
               className="absolute animate-floatUpAndFadeOut text-4xl text-white font-bold"

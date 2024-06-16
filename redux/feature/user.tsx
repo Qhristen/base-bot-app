@@ -247,9 +247,9 @@ export const userSlice = createSlice({
         // perClick: action.payload.perclick,
         // });
       })
-      .addCase(updateScore.pending, (state, action) => {
-        state.pointCount += state.miningInfo.perClick;
-      })
+      // .addCase(updateScore.pending, (state, action) => {
+      //   state.pointCount += state.miningInfo.perClick;
+      // })
       .addCase(updateScore.fulfilled, (state, action) => {
         state.status = "success";
       })
