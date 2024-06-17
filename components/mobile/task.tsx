@@ -6,7 +6,7 @@ import {
   OnePerson,
   SpecialTaskIcon,
   ThreePeople,
-  TwoPeople
+  TwoPeople,
 } from "@/assets/icons";
 import { TelegramContext } from "@/context/telegram-context";
 import {
@@ -57,7 +57,6 @@ const Task = () => {
 
   const userLeagueImage =
     userData && getImageForUserLevel(`${userData?.league.toLowerCase()}`);
-
 
   const isCompletedLeagueTask = (taskId: string) => {
     const checkTask =
@@ -169,8 +168,8 @@ const Task = () => {
                           </div>
                         </div>
                         <Button
-                          onClick={() => {
-                            dispatch(
+                          onClick={async () => {
+                            const res = await dispatch(
                               claimLeaguePoint({
                                 name: data.name,
                                 taskId: data?.id,
@@ -180,21 +179,26 @@ const Task = () => {
                                 type: "league",
                               })
                             );
-                            dispatch(fetchUser(String(user?.id)));
-                            dispatch(fetchAlluserTask());
-                            router.refresh()
+                            if (res.meta.requestStatus === "fulfilled") {
+                              dispatch(fetchUser(String(user?.id)));
+                              dispatch(fetchAlluserTask());
+                              router.refresh();
+                            }
                           }}
-                          disabled={Number(progress) < 100 ? true: false || isCompletedLeagueTask(data.id) ? true : false}
+                          disabled={
+                            Number(progress) < 100
+                              ? true
+                              : false || isCompletedLeagueTask(data.id)
+                              ? true
+                              : false
+                          }
                           size={`sm`}
                           variant={`primary`}
                         >
                           Claim
                         </Button>
                       </div>
-                      <Progress
-                        className="my-2"
-                        value={Number(progress)}
-                      />
+                      <Progress className="my-2" value={Number(progress)} />
                     </div>
                   );
                 })}
@@ -233,8 +237,8 @@ const Task = () => {
                         </div>
                       </div>
                       <Button
-                        onClick={() => {
-                          dispatch(
+                        onClick={async () => {
+                          const res = await dispatch(
                             claimRefPoint({
                               name: data.name,
                               taskId: data?.id,
@@ -244,12 +248,19 @@ const Task = () => {
                               type: "ref",
                             })
                           );
-                          dispatch(fetchAlluserTask());
-                          dispatch(fetchUser(String(user?.id)));
-                          router.refresh()
-
+                          if (res.meta.requestStatus === "fulfilled") {
+                            dispatch(fetchUser(String(user?.id)));
+                            dispatch(fetchAlluserTask());
+                            router.refresh();
+                          }
                         }}
-                        disabled={Number(progress) < 100 ? true: false || isCompletedRefTask(data.id)? true : false}
+                        disabled={
+                          Number(progress) < 100
+                            ? true
+                            : false || isCompletedRefTask(data.id)
+                            ? true
+                            : false
+                        }
                         size={`sm`}
                         variant={`primary`}
                       >
