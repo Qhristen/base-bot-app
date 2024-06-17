@@ -3,29 +3,12 @@
 import {
   ArcticonsCoin,
   ArrowRight,
-  MoneyBagColoredIcon,
   OnePerson,
-  ShareIcon,
   SpecialTaskIcon,
   ThreePeople,
-  TwoPeople,
+  TwoPeople
 } from "@/assets/icons";
 import { TelegramContext } from "@/context/telegram-context";
-import { useUser } from "@/hooks/useUser";
-import { League_Task, Ref_Task, SpecialTask, User } from "@/types";
-import { formatCompactNumber } from "@/utils/formatNumber";
-import { getImageForUserLevel } from "@/utils/userLevel";
-import axios from "axios";
-import Image from "next/image";
-import Link from "next/link";
-import { useContext, useEffect, useState } from "react";
-import CircularProgressBar from "../CircularProgressBar";
-import Container from "../container";
-import { Button } from "../ui/Button";
-import { Progress } from "../ui/ProgressBar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/Tab";
-import { toast, useToast } from "@/hooks/use-toast";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   claimLeaguePoint,
   claimRefPoint,
@@ -35,11 +18,23 @@ import {
   fetchSpecialTask,
 } from "@/redux/feature/task";
 import { fetchUser } from "@/redux/feature/user";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { formatCompactNumber } from "@/utils/formatNumber";
+import { getImageForUserLevel } from "@/utils/userLevel";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useContext, useEffect } from "react";
+import CircularProgressBar from "../CircularProgressBar";
+import Container from "../container";
+import { Button } from "../ui/Button";
+import { Progress } from "../ui/ProgressBar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/Tab";
 import Referrals from "./referrals";
 
 const Task = () => {
   const { user, webApp } = useContext(TelegramContext);
-  const { toast } = useToast();
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const { leagueTask, refTask, specialTask, status, userTasks } =
     useAppSelector((state) => state.task);
@@ -187,6 +182,7 @@ const Task = () => {
                             );
                             dispatch(fetchUser(String(user?.id)));
                             dispatch(fetchAlluserTask());
+                            router.refresh()
                           }}
                           disabled={Number(progress) < 100 ? true: false || isCompletedLeagueTask(data.id) ? true : false}
                           size={`sm`}
@@ -250,6 +246,8 @@ const Task = () => {
                           );
                           dispatch(fetchAlluserTask());
                           dispatch(fetchUser(String(user?.id)));
+                          router.refresh()
+
                         }}
                         disabled={Number(progress) < 100 ? true: false || isCompletedRefTask(data.id)? true : false}
                         size={`sm`}
