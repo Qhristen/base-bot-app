@@ -150,8 +150,9 @@ export interface Referals {
 }
 
 export interface Badge {
+  id: string;
   name:   string;
-  points: number;
+  point: number;
 }
 
 

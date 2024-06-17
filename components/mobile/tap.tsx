@@ -214,7 +214,7 @@ const Tap = () => {
             alt="logo"
             className="rounded-full z-20 scale-100"
             src={BaseLogoSm}
-            aria-disabled={miningInfo.limit <= 0}
+            // aria-disabled={miningInfo.limit <= 0}
             style={{ transform: transformStyle }}
           />
           {userData && userData?.perclick * 5 === miningInfo.perClick && <TapGuruAnimation />}
