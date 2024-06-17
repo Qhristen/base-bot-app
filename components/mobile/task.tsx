@@ -63,32 +63,25 @@ const Task = () => {
   const userLeagueImage =
     userData && getImageForUserLevel(`${userData?.league.toLowerCase()}`);
 
-  const onCopy = (data: string) => {
-    navigator.clipboard.writeText(data);
-    toast({ description: "Referral link copied." });
-  };
 
   const isCompletedLeagueTask = (taskId: string) => {
-    if (!userTasks) return;
+    const checkTask =
+      userTasks &&
+      userTasks.find(
+        (userT) => userT.taskId === taskId && userT.userId === String(user?.id)
+      );
 
-    const checkTask = userTasks.find(
-      (userT) => userT.taskId === taskId && userT.type === "league"
-    );
-
-    return checkTask ? true : false;
+    return checkTask;
   };
 
   const isCompletedRefTask = (taskId: string) => {
-    if (!userTasks) return;
+    const checkTask =
+      userTasks &&
+      userTasks.find(
+        (userT) => userT.taskId === taskId && userT.userId === String(user?.id)
+      );
 
-    const checkTask = userTasks.find(
-      (userT) =>
-        userT.taskId === taskId &&
-        userT.type === "ref" &&
-        userT.userId === String(user?.id)
-    );
-
-    return checkTask ? true : false;
+    return checkTask;
   };
 
   if (status === "loading" || userStatus === "loading")
@@ -195,14 +188,7 @@ const Task = () => {
                             dispatch(fetchUser(String(user?.id)));
                             dispatch(fetchAlluserTask());
                           }}
-                          disabled={
-                            userData?.league.trim().toLowerCase() !==
-                            data.name.trim().toLowerCase()
-                              ? true
-                              : isCompletedLeagueTask(data.id)
-                              ? true
-                              : false
-                          }
+                          disabled={Number(progress) < 100 ? true: false || isCompletedLeagueTask(data.id) ? true : false}
                           size={`sm`}
                           variant={`primary`}
                         >
@@ -211,7 +197,7 @@ const Task = () => {
                       </div>
                       <Progress
                         className="my-2"
-                        value={Number(Number(progress).toFixed(2))}
+                        value={Number(progress)}
                       />
                     </div>
                   );
@@ -265,10 +251,7 @@ const Task = () => {
                           dispatch(fetchAlluserTask());
                           dispatch(fetchUser(String(user?.id)));
                         }}
-                        disabled={
-                          data.totalInvite === userData?.friendsReferred ||
-                          !isCompletedRefTask(data.id)
-                        }
+                        disabled={!isCompletedRefTask(data.id)}
                         size={`sm`}
                         variant={`primary`}
                       >

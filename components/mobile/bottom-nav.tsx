@@ -48,7 +48,7 @@ const bottomNavs: INav[] = [
 const MovileBottomNav = () => {
   const pathname = usePathname();
   return (
-    <div className="fixed bg-black bottom-0 right-0 left-0 flex justify-evenly gap-5 items-center p-4">
+    <div className="fixed bg-black z-30 bottom-0 right-0 left-0 flex justify-evenly gap-5 items-center p-4">
       {bottomNavs.map((nav, i) => (
         <Link key={i} href={nav.link}>
           <div

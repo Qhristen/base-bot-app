@@ -39,7 +39,7 @@ const Boost = () => {
   const { user, webApp } = useContext(TelegramContext);
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { user: userData, status } = useAppSelector((state) => state.user);
+  const { user: userData, status, miningInfo } = useAppSelector((state) => state.user);
   const { status: boostStatus } = useAppSelector((state) => state.boost);
 
   useEffect(() => {
@@ -118,7 +118,7 @@ const Boost = () => {
                                 userData?.fullEnergy?.min &&
                                   userData?.fullEnergy?.min - 1
                               ),
-                              limit: Number(userData?.max),
+                              limit: Number(miningInfo?.max),
                               max: Number(userData?.fullEnergy?.max),
                               active: true,
                               userId: String(user?.id),
@@ -186,7 +186,7 @@ const Boost = () => {
                           dispatch(
                             getTapGuru({
                               min: Number(
-                                userData?.tapGuru?.min && userData?.tapGuru?.min
+                                userData?.tapGuru?.min && userData?.tapGuru?.min -1
                               ),
                               max: Number(userData?.tapGuru?.max),
                               active: true,
@@ -265,7 +265,7 @@ const Boost = () => {
                       onClick={() => {
                         if (
                           userData &&
-                          userData?.totalPoint >= userData?.multiTapPoint
+                          userData?.totalPoint >= userData?.multiTapPoint * 2
                         ) {
                           dispatch(
                             upadteMultitap({
@@ -301,10 +301,7 @@ const Boost = () => {
                     <div className="flex items-center gap-2 font-normal text-white">
                       <div className="flex items-center gap-0 text-white">
                         <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                        <span>
-                          {" "}
-                          {userData && userData?.max * 2}
-                        </span>
+                        <span> {userData && userData?.max * 2}</span>
                       </div>
                     </div>
                   </div>
@@ -325,10 +322,7 @@ const Boost = () => {
                         <div className="flex items-center justify-center gap-2">
                           <div className="flex items-center gap-0 text-white">
                             <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                            <span>
-                              {userData &&
-                                userData?.max * 2}
-                            </span>
+                            <span>{userData && userData?.max * 2}</span>
                           </div>
                           <div className="flex items-center gap-0">
                             <div className="flex items-center justify-center w-4 h-4 rounded-full p-0.5 bg-white text-black">
@@ -345,7 +339,7 @@ const Boost = () => {
                     </DialogHeader>
                     <Button
                       onClick={() => {
-                        if (userData && userData?.totalPoint >= userData?.max) {
+                        if (userData && userData?.totalPoint >= userData?.max * 2) {
                           dispatch(
                             updateChargeLimit({
                               userId: String(user?.id),
@@ -519,7 +513,6 @@ const Boost = () => {
                               })
                             );
                             dispatch(fetchUser(String(user?.id)));
-
                           } else {
                             webApp?.showAlert(
                               "You do not have enough Auto bot point to claim."
@@ -530,7 +523,9 @@ const Boost = () => {
                         variant={`primary`}
                         size={`lg`}
                         disabled={
-                          userData && userData?.autoBotpoints > 40000 ? false : true
+                          userData && userData?.autoBotpoints > 40000
+                            ? false
+                            : true
                         }
                       >
                         Claim points
@@ -546,7 +541,6 @@ const Boost = () => {
                               })
                             );
                             dispatch(fetchUser(String(user?.id)));
-
                           } else {
                             webApp?.showAlert(
                               "You do not have enough point to purchase Auto bot."

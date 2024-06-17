@@ -1,35 +1,21 @@
 import { Toaster } from "@/components/ui/toaster";
 import { TelegramProvider } from "@/context/telegram-context";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Sarala } from "next/font/google";
 import local from "next/font/local";
 import "./globals.css";
 import { Providers } from "@/redux/provider";
 import Head from "next/head";
 
-const inter = Inter({ subsets: ["latin"] });
-const generalSans = local({
-  src: [
-    {
-      path: "../assets/fonts/GeneralSans-Regular.otf",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../assets/fonts/GeneralSans-Bold.otf",
-      weight: "700",
-      style: "normal",
-    },
-  ],
-  variable: "--font-generalSans",
+const sarala = Sarala({
+  subsets: ["latin"],
+  weight: ["400", "700", "400", "700"],
 });
 
 export const metadata: Metadata = {
   title: "Base app",
   description: "Welcome to Base",
-  other: {
-    
-  }
+  other: {},
 };
 
 export default function RootLayout({
@@ -40,14 +26,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no"
+        />
       </Head>
-      <body className={`${generalSans.variable} ${inter.className}`}>
+      <body className={`${sarala.className}`}>
         <TelegramProvider>
-        <Providers>
+          <Providers>
             {children}
             <Toaster />
-        </Providers>
+          </Providers>
         </TelegramProvider>
       </body>
     </html>

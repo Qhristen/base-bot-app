@@ -26,6 +26,7 @@ import Container from "../container";
 import TapGuruAnimation from "../tap-guru-animation";
 import { Progress } from "../ui/ProgressBar";
 import { debounce } from "lodash";
+import { getTapGuru } from "@/redux/feature/boost";
 
 const Tap = () => {
   const { user, webApp } = useContext(TelegramContext);
@@ -46,18 +47,25 @@ const Tap = () => {
   useEffect(() => {
     if (miningInfo.limit < miningInfo.max) {
       intervalService.startInterval(Number(userData?.refillSpeed));
+      dispatch(
+          updateLimit({
+            max: Number(miningInfo?.max),
+            min: Number(miningInfo?.limit),
+            userId: String(user?.id),
+          })
+        );
     } else {
       intervalService.stopInterval();
     }
     return () => {
       // intervalService.stopInterval();// dispatch(
-      dispatch(
-        updateLimit({
-          max: Number(miningInfo?.max),
-          min: Number(miningInfo?.limit),
-          userId: String(user?.id),
-        })
-      );
+      // dispatch(
+      //   updateLimit({
+      //     max: Number(miningInfo?.max),
+      //     min: Number(miningInfo?.limit),
+      //     userId: String(user?.id),
+      //   })
+      // );
     };
   }, [intervalService, miningInfo, userData?.refillSpeed]);
 
@@ -70,6 +78,13 @@ const Tap = () => {
             perClick: userData.perclick,
           })
         );
+        dispatch(
+          getTapGuru({
+            ...userData.tapGuru,
+            active: false,
+            userId: String(user?.id),
+          })
+        );
       } else {
         clearInterval(interval);
       }
@@ -78,7 +93,7 @@ const Tap = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [dispatch, userData?.tapGuru]);
+  }, [dispatch, userData?.perclick, userData?.tapGuru]);
 
   const handleCoinTap = useCallback(
     (event: React.TouchEvent<HTMLImageElement>) => {
@@ -87,7 +102,7 @@ const Tap = () => {
         // audio.play();
 
         const touchPoints = Array.from(event.touches)
-          .slice(0, 10)
+          .slice(0, 5)
           .map((touch, index) => ({
             id: index,
             identifier: touch.identifier,
@@ -112,7 +127,7 @@ const Tap = () => {
               point: perTap,
             })
           );
-        }, 1500);
+        }, 2000);
 
         debouncedUpdateScore();
       } else {
@@ -156,7 +171,7 @@ const Tap = () => {
 
   return (
     <Container>
-      <div className="flex w-full h-full flex-col justify-between p-5 mb-40">
+      <div className="flex w-full h-full flex-col justify-between p-5">
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-1">
             <span className="flex items-center tabular-nums text-white select-none">
@@ -197,12 +212,12 @@ const Tap = () => {
             onTouchStart={handleCoinTap}
             onTouchEnd={handleTouchEnd}
             alt="logo"
-            className="rounded-full z-20"
+            className="rounded-full z-20 scale-100"
             src={BaseLogoSm}
             aria-disabled={miningInfo.limit <= 0}
             style={{ transform: transformStyle }}
           />
-          {userData && userData?.perclick * 5 === miningInfo.perClick && (
+          {userData && userData?.tapGuru?.active  && (
             <TapGuruAnimation />
           )}
 

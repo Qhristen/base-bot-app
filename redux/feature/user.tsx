@@ -37,14 +37,6 @@ interface IUserState {
   }[];
 }
 
-const MiningInfoLs = getLocalStorage("user_mininginfo");
-const miningInfo = !!MiningInfoLs
-  ? (JSON.parse(MiningInfoLs as string) as MiningInfo)
-  : {
-      limit: 50,
-      perClick: 1,
-      max: 50,
-    };
 
 const initialState: IUserState = {
   user: null,
@@ -135,10 +127,7 @@ export const updateLimit = createAsyncThunk(
 
 export const welcomePageUpdate = createAsyncThunk(
   "user/welcomePageUpdate",
-  async (
-    { userId }: { userId: string},
-    { rejectWithValue }
-  ) => {
+  async ({ userId }: { userId: string }, { rejectWithValue }) => {
     try {
       const response = await AxiosBaseUrl.post(`/user/welcome/${userId}`);
       return response.data?.user;
@@ -155,10 +144,6 @@ export const fetchBadges = createAsyncThunk("user/badges", async () => {
   const response = await AxiosBaseUrl.get(`/users/badges`);
   return response.data.badges;
 });
-
-const updateMiningInfoInLocalStorage = (miningInfo: MiningInfo) => {
-  setLocalStorage("user_mininginfo", miningInfo);
-};
 
 export const userSlice = createSlice({
   initialState,
@@ -210,14 +195,17 @@ export const userSlice = createSlice({
     },
     incrementMiningLimit(state, action) {
       if (state.miningInfo.limit < state.miningInfo.max) {
-        state.miningInfo.limit += action.payload;
+        const min = state.miningInfo.limit;
+        const max = state.miningInfo.max;
+        const result = min + action.payload;
+        state.miningInfo.limit = Math.max(0, Math.min(result, max));
 
-        if (state.miningInfo.limit <= 0) {
-          state.miningInfo.limit = 0;
-        }
-        if (state.miningInfo.limit > state.miningInfo.max) {
-          state.miningInfo.limit = state.miningInfo.max;
-        }
+        // if (state.miningInfo.limit <= 0) {
+        //   state.miningInfo.limit = 0;
+        // }
+        // if (state.miningInfo.limit > state.miningInfo.max) {
+        //   state.miningInfo.limit = state.miningInfo.max;
+        // }
         // updateMiningInfoInLocalStorage(state.miningInfo);
       }
     },
@@ -238,14 +226,7 @@ export const userSlice = createSlice({
           perClick: action.payload.perclick,
         };
 
-        // updateMiningInfoInLocalStorage({
-        //   limit:
-        //   state.miningInfo.limit < state.miningInfo.max
-        //     ? state.miningInfo.limit
-        //     : action.payload.limit,
-        // max: action.payload.max,
-        // perClick: action.payload.perclick,
-        // });
+    
       })
       // .addCase(updateScore.pending, (state, action) => {
       //   state.pointCount += state.miningInfo.perClick;
@@ -255,11 +236,11 @@ export const userSlice = createSlice({
       })
       .addCase(welcomePageUpdate.fulfilled, (state, action) => {
         state.status = "success";
-        state.user = action.payload
+        state.user = action.payload;
       })
-      .addCase(getTapGuru.pending, (state, action) => {
-        state.status = "loading";
-      })
+      // .addCase(getTapGuru.pending, (state, action) => {
+      //   state.status = "loading";
+      // })
       .addCase(claimLeaguePoint.pending, (state, action) => {
         state.status = "loading";
       })
@@ -269,17 +250,12 @@ export const userSlice = createSlice({
       })
       .addCase(getTapGuru.fulfilled, (state, action: PayloadAction<User>) => {
         state.status = "success";
-        state.user = action.payload
+        state.user = action.payload;
         state.miningInfo = {
           ...state.miningInfo,
-          limit: Math.max(0, state.miningInfo.limit),
           perClick: state.miningInfo.perClick * 5,
         };
-        // updateMiningInfoInLocalStorage({
-        //   ...state.miningInfo,
-        //   limit: state.miningInfo.limit,
-        //   perClick: state.miningInfo.perClick * 5,
-        // });
+    
       })
       .addCase(updateRefillSpeed.pending, (state, action) => {
         state.status = "loading";
@@ -299,9 +275,7 @@ export const userSlice = createSlice({
         state.status = "success";
         state.userReferals = action.payload;
       })
-      // .addCase(upadteMultitap.pending, (state, action) => {
-      //   state.status = "loading";
-      // })
+
       .addCase(
         upadteMultitap.fulfilled,
         (state, action: PayloadAction<User>) => {
@@ -312,10 +286,6 @@ export const userSlice = createSlice({
             perClick: action.payload.perclick,
           };
 
-          // updateMiningInfoInLocalStorage({
-          //   ...state.miningInfo,
-          //   perClick: action.payload.perclick,
-          // });
         }
       )
       .addCase(updateChargeLimit.pending, (state, action) => {
@@ -325,17 +295,12 @@ export const userSlice = createSlice({
         updateChargeLimit.fulfilled,
         (state, action: PayloadAction<User>) => {
           state.status = "success";
-          state.user = action.payload
+          state.user = action.payload;
           state.miningInfo = {
             ...state.miningInfo,
             limit: action.payload.limit,
             max: action.payload.max,
           };
-          // updateMiningInfoInLocalStorage({
-          //   ...state.miningInfo,
-          //   limit: action.payload.limit,
-          //   max: action.payload.max,
-          // });
         }
       )
       // .addCase(getFullEnergy.pending, (state, action) => {
@@ -345,18 +310,13 @@ export const userSlice = createSlice({
         getFullEnergy.fulfilled,
         (state, action: PayloadAction<User>) => {
           state.status = "success";
-          state.user = action.payload
+          state.user = action.payload;
           state.miningInfo = {
             limit: action.payload.limit,
             max: action.payload.max,
             perClick: action.payload.perclick,
           };
-          // updateMiningInfoInLocalStorage({
-          //   ...state.miningInfo,
-          //   limit: action.payload.limit,
-          //   max: action.payload.max,
-          //   perClick: action.payload.perclick,
-          // });
+
         }
       );
   },
