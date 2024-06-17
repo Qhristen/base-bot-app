@@ -78,13 +78,13 @@ const Tap = () => {
             perClick: userData.perclick,
           })
         );
-        dispatch(
-          getTapGuru({
-            ...userData.tapGuru,
-            active: false,
-            userId: String(user?.id),
-          })
-        );
+        // dispatch(
+        //   getTapGuru({
+        //     ...userData.tapGuru,
+        //     active: false,
+        //     userId: String(user?.id),
+        //   })
+        // );
       } else {
         clearInterval(interval);
       }
@@ -114,7 +114,7 @@ const Tap = () => {
         dispatch(setIsPressed(true));
         dispatch(
           updateMiningInfo({
-            limit: miningInfo.limit - miningInfo.perClick,
+            limit: Math.max(0, Math.min(miningInfo.limit - miningInfo.perClick, miningInfo.max)),
             status: "mining",
           })
         );
@@ -217,7 +217,7 @@ const Tap = () => {
             aria-disabled={miningInfo.limit <= 0}
             style={{ transform: transformStyle }}
           />
-          {userData && userData?.tapGuru?.active && <TapGuruAnimation />}
+          {userData && userData?.perclick * 5 === miningInfo.perClick && <TapGuruAnimation />}
 
           {textPoints.map((point) => (
             <div
