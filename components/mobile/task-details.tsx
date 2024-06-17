@@ -121,8 +121,8 @@ const TaskDetails = ({ taskId }: ITask) => {
 
                 <Button
                   disabled={isActivityCompleted(activity.id)}
-                  onClick={(e) => {
-                    dispatch(
+                  onClick={ async(e) => {
+                const res =    await dispatch(
                       submitSingleUserActivity({
                         activityId: activity.id,
                         clicked: true,
@@ -130,9 +130,12 @@ const TaskDetails = ({ taskId }: ITask) => {
                         taskId: singleSpecialTask.id,
                       })
                     );
-                    dispatch(fetchUserActivity());
-                    dispatch(fetchAlluserTask());
-                    dispatch(fetchSingleSpecialActivity(taskId));
+                    if(res.meta.requestStatus === "fulfilled"){
+                      dispatch(fetchUserActivity());
+                      dispatch(fetchAlluserTask());
+                      dispatch(fetchSingleSpecialActivity(taskId));
+                      router.refresh()
+                      }
                     webApp?.openLink(`${activity.link}`);
                     // router.push(`/single-task/${singleSpecialTask?.id}`);
                     // webApp?.BackButton.show();
@@ -150,8 +153,8 @@ const TaskDetails = ({ taskId }: ITask) => {
         {!isTaskSubmited ? (
           <Button
             disabled={!allTasksCompleted}
-            onClick={() => {
-              dispatch(
+            onClick={async() => {
+          const res = await    dispatch(
                 submitSpecialTask({
                   name: singleSpecialTask?.name,
                   status: "completed",
@@ -161,10 +164,14 @@ const TaskDetails = ({ taskId }: ITask) => {
                   userId: String(user?.id),
                 })
               );
-              dispatch(fetchUser(String(user?.id)));
-              dispatch(fetchUserActivity());
-              dispatch(fetchAlluserTask());
-              router.push(`/mobile/task`);
+              if(res.meta.requestStatus === "fulfilled"){
+                dispatch(fetchUser(String(user?.id)));
+                dispatch(fetchUserActivity());
+                dispatch(fetchAlluserTask());
+                // router.push(`/mobile/task`);
+                router.refresh()
+
+              }
             }}
             size={`lg`}
             variant={`primary`}
