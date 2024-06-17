@@ -251,7 +251,7 @@ const Task = () => {
                           dispatch(fetchAlluserTask());
                           dispatch(fetchUser(String(user?.id)));
                         }}
-                        disabled={!isCompletedRefTask(data.id)}
+                        disabled={Number(progress) < 100 ? true: false || isCompletedRefTask(data.id)? true : false}
                         size={`sm`}
                         variant={`primary`}
                       >

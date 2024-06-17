@@ -48,12 +48,12 @@ const Tap = () => {
     if (miningInfo.limit < miningInfo.max) {
       intervalService.startInterval(Number(userData?.refillSpeed));
       dispatch(
-          updateLimit({
-            max: Number(miningInfo?.max),
-            min: Number(miningInfo?.limit),
-            userId: String(user?.id),
-          })
-        );
+        updateLimit({
+          max: Number(miningInfo?.max),
+          min: Number(miningInfo?.limit),
+          userId: String(user?.id),
+        })
+      );
     } else {
       intervalService.stopInterval();
     }
@@ -118,7 +118,7 @@ const Tap = () => {
             status: "mining",
           })
         );
-        const perTap = miningInfo.perClick * touchPoints.length
+        const perTap = miningInfo.perClick * touchPoints.length;
         dispatch(incrementPoints(perTap));
         const debouncedUpdateScore = debounce(() => {
           dispatch(
@@ -177,7 +177,7 @@ const Tap = () => {
             <span className="flex items-center tabular-nums text-white select-none">
               <Image src={LightBolt} alt="LightBolt" />
               <span className="text-lg font-bold select-none">
-                {miningInfo.limit}
+                {Math.max(0, Math.min(miningInfo.limit, miningInfo.max))}
               </span>
               /{miningInfo.max}
             </span>
@@ -217,9 +217,7 @@ const Tap = () => {
             aria-disabled={miningInfo.limit <= 0}
             style={{ transform: transformStyle }}
           />
-          {userData && userData?.tapGuru?.active  && (
-            <TapGuruAnimation />
-          )}
+          {userData && userData?.tapGuru?.active && <TapGuruAnimation />}
 
           {textPoints.map((point) => (
             <div

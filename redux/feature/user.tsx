@@ -195,18 +195,14 @@ export const userSlice = createSlice({
     },
     incrementMiningLimit(state, action) {
       if (state.miningInfo.limit < state.miningInfo.max) {
-        const min = state.miningInfo.limit;
-        const max = state.miningInfo.max;
-        const result = min + action.payload;
-        state.miningInfo.limit = Math.max(0, Math.min(result, max));
+        state.miningInfo.limit += action.payload 
 
-        // if (state.miningInfo.limit <= 0) {
-        //   state.miningInfo.limit = 0;
-        // }
-        // if (state.miningInfo.limit > state.miningInfo.max) {
-        //   state.miningInfo.limit = state.miningInfo.max;
-        // }
-        // updateMiningInfoInLocalStorage(state.miningInfo);
+        if (state.miningInfo.limit <= 0) {
+          state.miningInfo.limit = 0;
+        }
+        if (state.miningInfo.limit > state.miningInfo.max) {
+          state.miningInfo.limit = state.miningInfo.max;
+        }
       }
     },
   },

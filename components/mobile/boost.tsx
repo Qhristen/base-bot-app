@@ -265,7 +265,7 @@ const Boost = () => {
                       onClick={() => {
                         if (
                           userData &&
-                          userData?.totalPoint >= userData?.multiTapPoint * 2
+                          userData?.totalPoint >= userData?.multiTapPoint
                         ) {
                           dispatch(
                             upadteMultitap({
@@ -339,7 +339,7 @@ const Boost = () => {
                     </DialogHeader>
                     <Button
                       onClick={() => {
-                        if (userData && userData?.totalPoint >= userData?.max * 2) {
+                        if (userData && userData?.totalPoint >= userData?.max) {
                           dispatch(
                             updateChargeLimit({
                               userId: String(user?.id),
