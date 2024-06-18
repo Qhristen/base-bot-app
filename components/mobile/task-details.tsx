@@ -56,7 +56,8 @@ const TaskDetails = ({ taskId }: ITask) => {
         userActivities &&
         userActivities.some(
           (completedTask) =>
-            completedTask.activityId === activity.id && completedTask.userId === String(user?.id) &&
+            completedTask.activityId === activity.id &&
+            completedTask.userId === String(user?.id) &&
             completedTask.clicked === true
         )
     );
@@ -121,8 +122,9 @@ const TaskDetails = ({ taskId }: ITask) => {
 
                 <Button
                   disabled={isActivityCompleted(activity.id)}
-                  onClick={ async(e) => {
-                const res =    await dispatch(
+                  onClick={async (e) => {
+                    webApp?.openLink(`${activity.link}`);
+                    const res = await dispatch(
                       submitSingleUserActivity({
                         activityId: activity.id,
                         clicked: true,
@@ -130,13 +132,12 @@ const TaskDetails = ({ taskId }: ITask) => {
                         taskId: singleSpecialTask.id,
                       })
                     );
-                    if(res.meta.requestStatus === "fulfilled"){
+                    if (res.meta.requestStatus === "fulfilled") {
                       dispatch(fetchUserActivity());
                       dispatch(fetchAlluserTask());
                       dispatch(fetchSingleSpecialActivity(taskId));
-                      router.refresh()
-                      }
-                    webApp?.openLink(`${activity.link}`);
+                      router.refresh();
+                    }
                     // router.push(`/single-task/${singleSpecialTask?.id}`);
                     // webApp?.BackButton.show();
                   }}
@@ -153,8 +154,8 @@ const TaskDetails = ({ taskId }: ITask) => {
         {!isTaskSubmited ? (
           <Button
             disabled={!allTasksCompleted}
-            onClick={async() => {
-          const res = await    dispatch(
+            onClick={async () => {
+              const res = await dispatch(
                 submitSpecialTask({
                   name: singleSpecialTask?.name,
                   status: "completed",
@@ -164,13 +165,12 @@ const TaskDetails = ({ taskId }: ITask) => {
                   userId: String(user?.id),
                 })
               );
-              if(res.meta.requestStatus === "fulfilled"){
+              if (res.meta.requestStatus === "fulfilled") {
                 dispatch(fetchUser(String(user?.id)));
                 dispatch(fetchUserActivity());
                 dispatch(fetchAlluserTask());
                 // router.push(`/mobile/task`);
-                router.refresh()
-
+                router.refresh();
               }
             }}
             size={`lg`}

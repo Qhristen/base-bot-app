@@ -26,7 +26,6 @@ import Container from "../container";
 import TapGuruAnimation from "../tap-guru-animation";
 import { Progress } from "../ui/ProgressBar";
 import { debounce } from "lodash";
-import { getTapGuru } from "@/redux/feature/boost";
 
 const Tap = () => {
   const { user, webApp } = useContext(TelegramContext);
@@ -71,72 +70,69 @@ const Tap = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (userData && userData?.tapGuru.min !== 0) {
-        dispatch(updateTapguru());
-        dispatch(
-          updateMiningInfo({
-            perClick: userData.perclick,
-          })
-        );
-        // dispatch(
-        //   getTapGuru({
-        //     ...userData.tapGuru,
-        //     active: false,
-        //     userId: String(user?.id),
-        //   })
-        // );
-      } else {
-        clearInterval(interval);
-      }
+      dispatch(updateTapguru());
+      dispatch(
+        updateMiningInfo({
+          perClick: Number(userData && userData.perclick),
+        })
+      );
+      // dispatch(
+      //   getTapGuru({
+      //     ...userData.tapGuru,
+      //     active: false,
+      //     userId: String(user?.id),
+      //   })
+      // );
     }, 20000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [dispatch, userData?.perclick, userData?.tapGuru]);
+  }, [userData?.tapGuru.min, dispatch]);
 
-  const handleCoinTap = useCallback(
-    (event: React.TouchEvent<HTMLImageElement>) => {
-      event.preventDefault();
-      if (miningInfo.limit > 0) {
-        // audio.play();
+  const handleCoinTap = (event: React.TouchEvent<HTMLImageElement>) => {
+    event.preventDefault();
+    if (miningInfo.limit > 0) {
+      // audio.play();
 
-        const touchPoints = Array.from(event.touches)
-          .slice(0, 5)
-          .map((touch, index) => ({
-            id: index,
-            identifier: touch.identifier,
-            clientX: touch.clientX,
-            clientY: touch.clientY,
-          }));
+      const touchPoints = Array.from(event.touches)
+        .slice(0, 5)
+        .map((touch, index) => ({
+          id: index,
+          identifier: touch.identifier,
+          clientX: touch.clientX,
+          clientY: touch.clientY,
+        }));
 
-        dispatch(addTextPoints(touchPoints));
-        dispatch(setIsPressed(true));
+      dispatch(addTextPoints(touchPoints));
+      dispatch(setIsPressed(true));
+      dispatch(
+        updateMiningInfo({
+          ...miningInfo,
+          limit: Math.max(
+            0,
+            Math.min(miningInfo.limit - miningInfo.perClick, miningInfo.max)
+          ),
+          status: "mining",
+        })
+      );
+      const perTap = miningInfo.perClick * touchPoints.length;
+      dispatch(incrementPoints(perTap));
+      const debouncedUpdateScore = debounce(() => {
         dispatch(
-          updateMiningInfo({
-            limit: Math.max(0, Math.min(miningInfo.limit - miningInfo.perClick, miningInfo.max)),
-            status: "mining",
+          updateScore({
+            userId: String(user?.id),
+            point: perTap,
           })
         );
-        const perTap = miningInfo.perClick * touchPoints.length;
-        dispatch(incrementPoints(perTap));
-        const debouncedUpdateScore = debounce(() => {
-          dispatch(
-            updateScore({
-              userId: String(user?.id),
-              point: perTap,
-            })
-          );
-        }, 2000);
+      }, 2000);
 
-        debouncedUpdateScore();
-      } else {
-        dispatch(updateMiningInfo({ status: "stop" }));
-        webApp?.showAlert("Mining limit reached, buy more refill speed.");
-      }
-    },
-    [dispatch, miningInfo]
-  );
+      debouncedUpdateScore();
+    } else {
+      dispatch(updateMiningInfo({ status: "stop" }));
+      webApp?.showAlert("Mining limit reached, buy more refill speed.");
+    }
+  };
 
   const handleTouchEnd = (event: React.TouchEvent<HTMLImageElement>) => {
     dispatch(setIsPressed(true));
@@ -217,7 +213,9 @@ const Tap = () => {
             // aria-disabled={miningInfo.limit <= 0}
             style={{ transform: transformStyle }}
           />
-          {userData && userData?.perclick * 5 === miningInfo.perClick && <TapGuruAnimation />}
+          {userData && userData?.perclick * 5 === miningInfo.perClick && (
+            <TapGuruAnimation />
+          )}
 
           {textPoints.map((point) => (
             <div

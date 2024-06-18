@@ -1,5 +1,6 @@
-import MovileBottomNav from "@/components/mobile/bottom-nav";
-import { TelegramProvider } from "@/context/telegram-context";
+"use client";
+
+import MobileLayout from "@/components/mobileLayout";
 
 export default function RootLayout({
   children,
@@ -7,11 +8,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <TelegramProvider>
-      <div className="w-full h-full">
-        {children}
-        <MovileBottomNav />
-      </div>
-    </TelegramProvider>
+    <div className="w-full h-full">
+      <MobileLayout>{children}</MobileLayout>
+    </div>
   );
 }
