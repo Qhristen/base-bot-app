@@ -19,13 +19,13 @@ import { formatCompactNumber } from "@/utils/formatNumber";
 import intervalService from "@/utils/IntervalService";
 import { getImageForUserLevel } from "@/utils/userLevel";
 import { motion } from "framer-motion";
+import { debounce } from "lodash";
 import Image from "next/image";
 import { useCallback, useContext, useEffect, useMemo } from "react";
 import CircularProgressBar from "../CircularProgressBar";
 import Container from "../container";
 import TapGuruAnimation from "../tap-guru-animation";
 import { Progress } from "../ui/ProgressBar";
-import { debounce } from "lodash";
 
 const Tap = () => {
   const { user, webApp } = useContext(TelegramContext);
@@ -41,6 +41,7 @@ const Tap = () => {
 
   useEffect(() => {
     dispatch(fetchUser(String(user?.id)));
+    webApp?.expand();
   }, [dispatch, webApp, user]);
 
   useEffect(() => {
@@ -94,7 +95,7 @@ const Tap = () => {
     event.preventDefault();
     if (miningInfo.limit > 0) {
       // audio.play();
-
+      dispatch(setIsPressed(true));
       const touchPoints = Array.from(event.touches)
         .slice(0, 5)
         .map((touch, index) => ({
@@ -135,10 +136,10 @@ const Tap = () => {
   };
 
   const handleTouchEnd = (event: React.TouchEvent<HTMLImageElement>) => {
-    dispatch(setIsPressed(true));
+    dispatch(setIsPressed(false));
     dispatch(
       updateMiningInfo({
-        status: "mining"
+        status: "mining",
       })
     );
   };
@@ -153,11 +154,19 @@ const Tap = () => {
   const userLeagueImage =
     userData && getImageForUserLevel(`${userData?.league.toLowerCase()}`);
 
+  // Calculate perspective origin based on the average of touch points
+  const originX =
+    textPoints.reduce((acc, touch) => acc + touch.clientX, 0) /
+    textPoints.length;
+  const originY =
+    textPoints.reduce((acc, touch) => acc + touch.clientY, 0) /
+    textPoints.length;
+
   const transformStyle = useMemo(() => {
-    if (!isPressed || !textPoints[0]) return "none";
+    if (!isPressed || !textPoints) return "none";
     return `perspective(500px) rotateX(${
-      (textPoints[0]?.clientY - window.innerHeight / 2) / 20
-    }deg) rotateY(${(textPoints[0]?.clientX - window.innerWidth / 2) / 20}deg)`;
+      (originY - window.innerHeight / 2) / 20
+    }deg) rotateY(${(originX - window.innerWidth / 2) / 20}deg)`;
   }, [isPressed, textPoints]);
 
   if (status === "loading")
