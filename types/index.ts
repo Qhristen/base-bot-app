@@ -189,4 +189,5 @@ export interface SubmitType {
   status: string | undefined;
   point: number | undefined;
   type: string | undefined;
+  league?: string | undefined;
 }

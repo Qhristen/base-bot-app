@@ -67,6 +67,7 @@ export const claimLeaguePoint = createAsyncThunk(
         status: data.status,
         point: data?.point,
         type: data.type,
+        league: data.league
       });
       return response.data;
     } catch (error) {

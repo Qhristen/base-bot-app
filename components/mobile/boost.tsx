@@ -146,7 +146,7 @@ const Boost = () => {
                     <ArcticonsCoinGold className="fill-yellow stroke-white" />
                   </div>
                   <div className="text-white">
-                    <h4 className="font-medium text-white">Taping Guru</h4>
+                    <h4 className="font-medium text-white">Turbo</h4>
                     <div className="flex items-center gap-2 font-normal text-white">
                       <span>
                         {userData?.tapGuru?.min}/{userData?.tapGuru?.max}
@@ -161,7 +161,7 @@ const Boost = () => {
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>Taping Guru</DialogTitle>
+                      <DialogTitle>Turbo</DialogTitle>
                       {/* <div className="flex items-center justify-center py-4">
                         <div className="flex items-center justify-center p-2 w-10 h-10 rounded-full bg-gray">
                           <Image src={RefillSpeedIcon} alt="LightBolt" />

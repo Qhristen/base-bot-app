@@ -44,7 +44,7 @@ const Tap = () => {
   }, [dispatch, webApp, user]);
 
   useEffect(() => {
-    if (miningInfo.limit < miningInfo.max) {
+    if (miningInfo.limit < miningInfo.max && miningInfo.status === "mining") {
       intervalService.startInterval(Number(userData?.refillSpeed));
       dispatch(
         updateLimit({
@@ -113,7 +113,7 @@ const Tap = () => {
             0,
             Math.min(miningInfo.limit - miningInfo.perClick, miningInfo.max)
           ),
-          status: "mining",
+          status: "idle",
         })
       );
       const perTap = miningInfo.perClick * touchPoints.length;
@@ -130,12 +130,17 @@ const Tap = () => {
       debouncedUpdateScore();
     } else {
       dispatch(updateMiningInfo({ status: "stop" }));
-      webApp?.showAlert("Mining limit reached, buy more refill speed.");
+      // webApp?.showAlert("Mining limit reached, buy more refill speed.");
     }
   };
 
   const handleTouchEnd = (event: React.TouchEvent<HTMLImageElement>) => {
     dispatch(setIsPressed(true));
+    dispatch(
+      updateMiningInfo({
+        status: "mining",
+      })
+    );
   };
 
   const handleRemovePoint = useCallback(
@@ -150,9 +155,12 @@ const Tap = () => {
 
   const transformStyle = useMemo(() => {
     if (!isPressed || !textPoints[0]) return "none";
-    return `perspective(500px) rotateX(${
-      (textPoints[0]?.clientY - window.innerHeight / 2) / 20
-    }deg) rotateY(${(textPoints[0]?.clientX - window.innerWidth / 2) / 20}deg)`;
+    return `perspective(500px) rotateY(${textPoints.map(
+      (pt) => (pt.clientX - window.innerHeight / 2) / 20
+    )}deg)
+    }deg) rotateY(${textPoints.map(
+      (pt) => (pt.clientX - window.innerWidth / 2) / 20
+    )}deg)`;
   }, [isPressed, textPoints]);
 
   if (status === "loading")
@@ -222,7 +230,7 @@ const Tap = () => {
               key={point.id}
               style={{
                 left: `${point.clientX - 50}px`,
-                top: `${point.clientY - 200}px`,
+                top: `${point.clientY - 230}px`,
                 zIndex: 60,
               }}
               className="absolute animate-floatUpAndFadeOut text-4xl text-white font-bold"
