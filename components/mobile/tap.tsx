@@ -138,7 +138,7 @@ const Tap = () => {
     dispatch(setIsPressed(true));
     dispatch(
       updateMiningInfo({
-        status: "mining",
+        status: "mining"
       })
     );
   };
@@ -155,12 +155,9 @@ const Tap = () => {
 
   const transformStyle = useMemo(() => {
     if (!isPressed || !textPoints[0]) return "none";
-    return `perspective(500px) rotateY(${textPoints.map(
-      (pt) => (pt.clientX - window.innerHeight / 2) / 20
-    )}deg)
-    }deg) rotateY(${textPoints.map(
-      (pt) => (pt.clientX - window.innerWidth / 2) / 20
-    )}deg)`;
+    return `perspective(500px) rotateX(${
+      (textPoints[0]?.clientY - window.innerHeight / 2) / 20
+    }deg) rotateY(${(textPoints[0]?.clientX - window.innerWidth / 2) / 20}deg)`;
   }, [isPressed, textPoints]);
 
   if (status === "loading")
