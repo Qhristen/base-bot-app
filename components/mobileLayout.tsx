@@ -7,19 +7,20 @@ import MovileBottomNav from "./mobile/bottom-nav";
 import DesktopMessage from "./desktopMessage";
 
 const MobileLayout = ({ children }: { children: React.ReactNode }) => {
-  const { webApp } = useContext(TelegramContext);
+  const { user } = useContext(TelegramContext);
+
+  if (!isMobile && !user?.id)
+    return (
+      <>
+        <DesktopMessage />
+      </>
+    );
 
   return (
-    <div>
-      {isMobile && webApp ? (
-        <>
-          {children}
-          <MovileBottomNav />
-        </>
-      ) : (
-        <DesktopMessage />
-      )}
-    </div>
+    <>
+      {children}
+      <MovileBottomNav />
+    </>
   );
 };
 
