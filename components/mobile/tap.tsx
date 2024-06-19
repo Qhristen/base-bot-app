@@ -96,7 +96,7 @@ const Tap = () => {
       // audio.play();
       dispatch(setIsPressed(true));
       const touchPoints = Array.from(event.touches)
-        .slice(0, 5)
+        .slice(0, 10)
         .map((touch, index) => ({
           id: index,
           identifier: touch.identifier,
