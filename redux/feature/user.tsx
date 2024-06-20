@@ -26,7 +26,7 @@ interface IUserState {
   isAuth: Boolean;
   status: string;
   pointCount: number;
-  counter: number;
+  totalPoints: number;
   miningInfo: MiningInfo;
   isPressed: boolean;
   textPoints: {
@@ -37,14 +37,13 @@ interface IUserState {
   }[];
 }
 
-
 const initialState: IUserState = {
   user: null,
   userReferals: [],
   isAuth: false,
   status: "idle",
   pointCount: 0,
-  counter: 0,
+  totalPoints: 0,
   miningInfo: {
     limit: 0,
     perClick: 0,
@@ -156,8 +155,12 @@ export const userSlice = createSlice({
     setIsPressed(state, action: PayloadAction<boolean>) {
       state.isPressed = action.payload;
     },
+    clearTap(state) {
+      state.pointCount = 0;
+    },
     incrementPoints(state, action: PayloadAction<number>) {
       state.pointCount += action.payload;
+      state.totalPoints += action.payload;
       // updateMiningInfoInLocalStorage({
       //   ...state.miningInfo,
       // });
@@ -195,10 +198,16 @@ export const userSlice = createSlice({
     },
     incrementMiningLimit(state, action) {
       if (state.miningInfo.limit < state.miningInfo.max) {
-        state.miningInfo ={
+        state.miningInfo = {
           ...state.miningInfo,
-          limit: Math.max(0, Math.min(state.miningInfo.limit + action.payload, state.miningInfo.max))
-        }
+          limit: Math.max(
+            0,
+            Math.min(
+              state.miningInfo.limit + action.payload,
+              state.miningInfo.max
+            )
+          ),
+        };
 
         // if (state.miningInfo.limit <= 0) {
         //   state.miningInfo.limit = 0;
@@ -217,15 +226,13 @@ export const userSlice = createSlice({
       .addCase(fetchUser.fulfilled, (state, action: PayloadAction<User>) => {
         state.status = "success";
         state.user = action.payload;
-        state.pointCount = action.payload.totalPoint;
+        state.totalPoints += action.payload.totalPoint;
         state.miningInfo = {
           ...state.miningInfo,
           limit: action.payload.limit,
           max: action.payload.max,
           perClick: action.payload.perclick,
         };
-
-    
       })
       // .addCase(updateScore.pending, (state, action) => {
       //   state.pointCount += state.miningInfo.perClick;
@@ -254,7 +261,6 @@ export const userSlice = createSlice({
           ...state.miningInfo,
           perClick: state.miningInfo.perClick * 5,
         };
-    
       })
       .addCase(updateRefillSpeed.pending, (state, action) => {
         state.status = "loading";
@@ -284,7 +290,6 @@ export const userSlice = createSlice({
             ...state.miningInfo,
             perClick: action.payload.perclick,
           };
-
         }
       )
       .addCase(updateChargeLimit.pending, (state, action) => {
@@ -315,7 +320,6 @@ export const userSlice = createSlice({
             max: action.payload.max,
             perClick: action.payload.perclick,
           };
-
         }
       );
   },
@@ -332,4 +336,5 @@ export const {
   removePoint,
   incrementMiningLimit,
   updateTapguru,
+  clearTap,
 } = userSlice.actions;

@@ -5,6 +5,7 @@ import { TelegramContext } from "@/context/telegram-context";
 
 import {
   addTextPoints,
+  clearTap,
   fetchUser,
   incrementPoints,
   removePoint,
@@ -36,6 +37,7 @@ const Tap = () => {
     user: userData,
     status,
     pointCount,
+    totalPoints
   } = useAppSelector((state) => state.user);
 
   useEffect(() => {
@@ -46,18 +48,6 @@ const Tap = () => {
   useEffect(() => {
     if (miningInfo.limit < miningInfo.max && miningInfo.status === "mining") {
       intervalService.startInterval(Number(userData?.refillSpeed));
-      dispatch(
-        updateLimit({
-          max: Number(miningInfo?.max),
-          min: Number(miningInfo?.limit),
-          userId: String(user?.id),
-        })
-      );
-    } else {
-      intervalService.stopInterval();
-    }
-    return () => {
-      // intervalService.stopInterval();// dispatch(
       // dispatch(
       //   updateLimit({
       //     max: Number(miningInfo?.max),
@@ -65,6 +55,18 @@ const Tap = () => {
       //     userId: String(user?.id),
       //   })
       // );
+    } else {
+      intervalService.stopInterval();
+    }
+    return () => {
+      // intervalService.stopInterval();// dispatch(
+      dispatch(
+        updateLimit({
+          max: Number(miningInfo?.max),
+          min: Number(miningInfo?.limit),
+          userId: String(user?.id),
+        })
+      );
     };
   }, [intervalService, miningInfo, userData?.refillSpeed]);
 
@@ -89,6 +91,20 @@ const Tap = () => {
       clearInterval(interval);
     };
   }, [userData?.tapGuru.min, dispatch]);
+
+  useEffect(() => {
+    const timeOut = setTimeout(() => {
+      dispatch(
+        updateScore({
+          userId: String(user?.id),
+          point: pointCount,
+        })
+      );
+      dispatch(clearTap())
+    }, 1000);
+
+    return () => clearTimeout(timeOut);
+  }, [dispatch, pointCount]);
 
   const handleCoinTap = (event: React.TouchEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -118,12 +134,6 @@ const Tap = () => {
       );
       const perTap = miningInfo.perClick * touchPoints.length;
       dispatch(incrementPoints(perTap));
-      dispatch(
-        updateScore({
-          userId: String(user?.id),
-          point: perTap,
-        })
-      );
     } else {
       dispatch(updateMiningInfo({ status: "stop" }));
       // webApp?.showAlert("Mining limit reached, buy more refill speed.");
@@ -201,13 +211,13 @@ const Tap = () => {
         <div className="flex flex-col items-center justify-center select-none mt-10">
           <div className="text-gray-light">My points</div>
           <motion.div
-            key={pointCount}
+            key={totalPoints}
             initial={{ scale: 1 }}
             animate={{ scale: 1.25 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
             <h1 className="text-4xl font-black text-white">
-              {formatCompactNumber(pointCount)}
+              {formatCompactNumber(totalPoints)}
             </h1>
           </motion.div>
         </div>
