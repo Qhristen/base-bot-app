@@ -226,7 +226,7 @@ export const userSlice = createSlice({
       .addCase(fetchUser.fulfilled, (state, action: PayloadAction<User>) => {
         state.status = "success";
         state.user = action.payload;
-        state.totalPoints += action.payload.totalPoint;
+        state.totalPoints = action.payload.totalPoint;
         state.miningInfo = {
           ...state.miningInfo,
           limit: action.payload.limit,
