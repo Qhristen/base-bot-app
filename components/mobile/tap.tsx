@@ -21,7 +21,13 @@ import intervalService from "@/utils/IntervalService";
 import { getImageForUserLevel } from "@/utils/userLevel";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useCallback, useContext, useEffect, useMemo } from "react";
+import {
+  PointerEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
 import CircularProgressBar from "../CircularProgressBar";
 import Container from "../container";
 import TapGuruAnimation from "../tap-guru-animation";
@@ -37,7 +43,7 @@ const Tap = () => {
     user: userData,
     status,
     pointCount,
-    totalPoints
+    totalPoints,
   } = useAppSelector((state) => state.user);
 
   useEffect(() => {
@@ -100,27 +106,28 @@ const Tap = () => {
           point: pointCount,
         })
       );
-      dispatch(clearTap())
+      dispatch(clearTap());
     }, 1000);
 
     return () => clearTimeout(timeOut);
   }, [dispatch, pointCount]);
 
-  const handleCoinTap = (event: React.TouchEvent<HTMLDivElement>) => {
+  const handleCoinTap = (event: PointerEvent<HTMLDivElement>) => {
     event.preventDefault();
     if (miningInfo.limit > 0) {
       // audio.play();
       dispatch(setIsPressed(true));
-      const touchPoints = Array.from(event.touches)
-        .slice(0, 10)
-        .map((touch, index) => ({
-          id: index,
-          identifier: touch.identifier,
-          clientX: touch.clientX,
-          clientY: touch.clientY,
-        }));
 
-      dispatch(addTextPoints(touchPoints));
+      dispatch(
+        addTextPoints([
+          {
+            clientX: event.clientX,
+            clientY: event.clientY,
+            id: Date.now(),
+            identifier: Date.now(),
+          },
+        ])
+      );
       dispatch(setIsPressed(true));
       dispatch(
         updateMiningInfo({
@@ -132,7 +139,7 @@ const Tap = () => {
           status: "idle",
         })
       );
-      const perTap = miningInfo.perClick * touchPoints.length;
+      const perTap = miningInfo.perClick * textPoints.length;
       dispatch(incrementPoints(perTap));
     } else {
       dispatch(updateMiningInfo({ status: "stop" }));
@@ -140,7 +147,7 @@ const Tap = () => {
     }
   };
 
-  const handleTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+  const handleTouchEnd = (event: PointerEvent<HTMLDivElement>) => {
     dispatch(setIsPressed(false));
     dispatch(
       updateMiningInfo({
@@ -222,8 +229,9 @@ const Tap = () => {
           </motion.div>
         </div>
         <div
-          onTouchStart={handleCoinTap}
-          onTouchEnd={handleTouchEnd}
+          // onTouchStart={handleCoinTap}
+          onPointerDown={handleCoinTap}
+          onPointerOut={handleTouchEnd}
           style={{ transform: transformStyle }}
           className="relative flex items-center tabular-nums gap-0 justify-center mt-10 overflow-hidden"
         >

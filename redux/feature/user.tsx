@@ -31,7 +31,7 @@ interface IUserState {
   isPressed: boolean;
   textPoints: {
     id: number;
-    identifier: number;
+    identifier?: number;
     clientX: number;
     clientY: number;
   }[];
