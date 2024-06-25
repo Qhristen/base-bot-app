@@ -139,8 +139,7 @@ const Tap = () => {
           status: "idle",
         })
       );
-      const perTap = miningInfo.perClick * textPoints.length;
-      dispatch(incrementPoints(perTap));
+      dispatch(incrementPoints(miningInfo.perClick ));
     } else {
       dispatch(updateMiningInfo({ status: "stop" }));
       // webApp?.showAlert("Mining limit reached, buy more refill speed.");

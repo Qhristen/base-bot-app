@@ -17,6 +17,7 @@ import Container from "../container";
 import { Button } from "../ui/Button";
 import { useRouter } from "next/navigation";
 import { fetchUser } from "@/redux/feature/user";
+import { formatCompactNumber } from "@/utils/formatNumber";
 
 interface ITask {
   taskId: string;
@@ -103,7 +104,10 @@ const TaskDetails = ({ taskId }: ITask) => {
               <div className="text-white">
                 <h4 className="font-normal text-white">Reward</h4>
                 <div className="flex items-center gap-2 font-normal text-white">
-                  <span className="text-sm">{singleSpecialTask?.point} </span>
+                  <span className="text-sm">
+                    {singleSpecialTask &&
+                      formatCompactNumber(singleSpecialTask?.point)}{" "}
+                  </span>
                 </div>
               </div>
             </div>

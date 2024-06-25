@@ -111,10 +111,22 @@ const Task = () => {
         </div>
         <Tabs defaultValue="special" className="w-full mt-10">
           <TabsList className="flex itens justify-between mb-5">
-            <TabsTrigger value="special">Special</TabsTrigger>
-            <TabsTrigger value="leagues">Leagues</TabsTrigger>
-            <TabsTrigger value="ref">Ref Tasks</TabsTrigger>
-            <TabsTrigger value="referral">Referrals</TabsTrigger>
+            <TabsTrigger className="relative inline-flex w-fit" value="special">
+              {/* <div className="absolute bottom-auto left-auto right-0 top-0 z-10 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 rounded-full bg-red-600 p-1 text-xs"></div> */}
+              Special
+            </TabsTrigger>
+            <TabsTrigger className="relative inline-flex w-fit" value="leagues">
+              <div className="absolute bottom-auto left-auto right-0 top-0 z-10 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 rounded-full bg-red-600 p-1 text-xs"></div>
+              Leagues
+            </TabsTrigger>
+            <TabsTrigger className="relative inline-flex w-fit" value="ref">
+              <div className="absolute bottom-auto left-auto right-0 top-0 z-10 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 rounded-full bg-red-600 p-1 text-xs"></div>
+              Ref Tasks
+            </TabsTrigger>
+            <TabsTrigger className="relative inline-flex w-fit" value="referral">
+              {/* <div className="absolute bottom-auto left-auto right-0 top-0 z-10 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 rounded-full bg-red-600 p-1 text-xs"></div> */}
+              Referrals
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="special">
             <div className="bg-gray rounded-2xl p-3">
@@ -129,7 +141,7 @@ const Task = () => {
                         <h4 className="font-medium text-white">{data?.name}</h4>
                         <div className="flex items-center gap-2 font-bold text-white">
                           <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
-                          <span>{data.point}</span>
+                          <span>{formatCompactNumber(data.point)}</span>
                         </div>
                       </div>
                     </div>
@@ -142,7 +154,7 @@ const Task = () => {
           <TabsContent value="leagues">
             <div className="bg-gray rounded-2xl p-3">
               {leagueTask
-                ?.filter((leag) => leag.name !== "Novice")
+                ?.filter((leag) => leag.name !== userData?.league)
                 ?.map((data, i) => {
                   const LeagueImage = getImageForUserLevel(
                     `${data.name.toLowerCase()}`
@@ -163,7 +175,7 @@ const Task = () => {
                             </h4>
                             <div className="flex items-center gap-2 font-bold text-white">
                               <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
-                              <span>{data?.point}</span>
+                              <span>{formatCompactNumber(data.point)}</span>
                             </div>
                           </div>
                         </div>
@@ -233,8 +245,8 @@ const Task = () => {
                           </h4>
                           <div className="flex items-center gap-2 font-bold text-white">
                             <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
-                            <span>{data.point}</span>
-                          </div>
+                            <span>{formatCompactNumber(data.point)}</span>
+                            </div>
                         </div>
                       </div>
                       <Button

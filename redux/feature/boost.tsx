@@ -86,12 +86,12 @@ export const getFullEnergy = createAsyncThunk(
 export const upadteMultitap = createAsyncThunk(
   "boost/upadteMultitap",
   async (
-    { userId, point }: { userId: string; point: number },
+    { userId, level }: { userId: string; point?: number; level: number },
     { rejectWithValue }
   ) => {
     try {
       const response = await AxiosBaseUrl.patch(`/user/${userId}/multitap`, {
-        point,
+        level,
       });
       return response.data.user;
     } catch (error) {
@@ -106,14 +106,14 @@ export const upadteMultitap = createAsyncThunk(
 export const updateChargeLimit = createAsyncThunk(
   "boost/updateChargeLimit",
   async (
-    { userId, point, limit }: { userId: string; point: number; limit: number },
+    { userId, level, limit }: { userId: string; level: number; limit: number },
     { rejectWithValue }
   ) => {
     try {
       const response = await AxiosBaseUrl.post(
         `/user/update/charge-limit/${userId}`,
         {
-          point,
+          level,
           limit,
         }
       );
@@ -130,14 +130,14 @@ export const updateChargeLimit = createAsyncThunk(
 export const updateRefillSpeed = createAsyncThunk(
   "boost/updateRefillSpeed",
   async (
-    { userId, point, speed }: { userId: string; point: number; speed: number },
+    { userId, level, speed }: { userId: string; level: number; speed: number },
     { rejectWithValue }
   ) => {
     try {
       const response = await AxiosBaseUrl.post(
         `/user/update/refill-speed/${userId}`,
         {
-          point,
+          level,
           speed,
         }
       );
@@ -154,7 +154,7 @@ export const updateRefillSpeed = createAsyncThunk(
 export const purchaseAutoBot = createAsyncThunk(
   "boost/purchaseAutoBot",
   async (
-    { userId, point }: { userId: string; point: number},
+    { userId, point }: { userId: string; point: number },
     { rejectWithValue }
   ) => {
     try {
@@ -174,13 +174,16 @@ export const purchaseAutoBot = createAsyncThunk(
 export const claimAutoBotPoints = createAsyncThunk(
   "boost/claimAutoBotPoints",
   async (
-    { userId, point }: { userId: string; point: number},
+    { userId, point }: { userId: string; point: number },
     { rejectWithValue }
   ) => {
     try {
-      const response = await AxiosBaseUrl.post(`/user/claim/auto-bot-point/${userId}`, {
-        point,
-      });
+      const response = await AxiosBaseUrl.post(
+        `/user/claim/auto-bot-point/${userId}`,
+        {
+          point,
+        }
+      );
       return response.data.data.user;
     } catch (error) {
       if (!error) {
@@ -189,7 +192,7 @@ export const claimAutoBotPoints = createAsyncThunk(
       return rejectWithValue(error);
     }
   }
-); 
+);
 
 export const boostSlice = createSlice({
   initialState,

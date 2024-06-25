@@ -50,7 +50,7 @@ const MovileBottomNav = () => {
   return (
     <div className="fixed bg-black z-30 bottom-0 right-0 left-0 flex justify-evenly gap-5 items-center p-4">
       {bottomNavs.map((nav, i) => (
-        <Link key={i} href={nav.link}>
+        <Link key={i} href={nav.link} className="relative inline-flex w-fit">
           <div
             className={cn(
               "flex scale-95 flex-col flex-grow justify-center items-center gap-1",
@@ -61,6 +61,9 @@ const MovileBottomNav = () => {
             <nav.icon className={cn("fill-primary")} />
             <div className="text-white">{nav.title}</div>
           </div>
+            {nav.title === "Task" && (
+              <div className="absolute bottom-auto left-auto right-0 top-0 z-10 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 rounded-full bg-red-600 p-1 text-xs"></div>
+            )}
         </Link>
       ))}
     </div>

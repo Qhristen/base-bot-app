@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { fetchUserReferals } from "@/redux/feature/user";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { User } from "@/types";
+import { formatCompactNumber } from "@/utils/formatNumber";
 import { useContext, useEffect } from "react";
 
 const Referrals = () => {
@@ -62,9 +63,9 @@ const Referrals = () => {
           <h4 className="font-bold text-white">{referral.referredTo.telegramUserName}</h4>
           <div className="flex items-center justify-between text-white">
             <span>
-              {referral.referredTo.league} | {referral.referredTo.totalPoint}
+              {referral.referredTo.league} | {formatCompactNumber(referral.referredTo.totalPoint)}
             </span>
-            <span>+{referral.point}</span>
+            <span>+{formatCompactNumber(referral.point)}</span>
           </div>
         </div>
       ))}

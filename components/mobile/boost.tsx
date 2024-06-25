@@ -39,7 +39,11 @@ const Boost = () => {
   const { user, webApp } = useContext(TelegramContext);
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { user: userData, status, miningInfo } = useAppSelector((state) => state.user);
+  const {
+    user: userData,
+    status,
+    miningInfo,
+  } = useAppSelector((state) => state.user);
   const { status: boostStatus } = useAppSelector((state) => state.boost);
 
   useEffect(() => {
@@ -186,7 +190,8 @@ const Boost = () => {
                           dispatch(
                             getTapGuru({
                               min: Number(
-                                userData?.tapGuru?.min && userData?.tapGuru?.min -1
+                                userData?.tapGuru?.min &&
+                                  userData?.tapGuru?.min - 1
                               ),
                               max: Number(userData?.tapGuru?.max),
                               active: true,
@@ -225,7 +230,10 @@ const Boost = () => {
                     <div className="flex items-center gap-2 font-normal text-white">
                       <div className="flex items-center gap-0 text-white">
                         <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                        <span>{userData?.multiTapPoint}</span>
+                        <span>
+                          {userData &&
+                            formatCompactNumber(userData?.multiTapPoint)}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -246,7 +254,10 @@ const Boost = () => {
                         <div className="flex items-center justify-center gap-2">
                           <div className="flex items-center gap-0 text-white">
                             <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                            <span>{userData?.multiTapPoint}</span>
+                            <span>
+                              {userData &&
+                                formatCompactNumber(userData?.multiTapPoint)}
+                            </span>
                           </div>
                           <div className="flex items-center gap-0">
                             <div className="flex items-center justify-center w-4 h-4 rounded-full p-0.5 bg-white text-black">
@@ -270,7 +281,8 @@ const Boost = () => {
                           dispatch(
                             upadteMultitap({
                               userId: String(user?.id),
-                              point: Number(userData?.multiTapPoint) * 2,
+                              // point: Number(userData?.multiTapPoint),
+                              level: userData.multiTapLevel + 1,
                             })
                           );
                           dispatch(fetchUser(String(user?.id)));
@@ -281,6 +293,7 @@ const Boost = () => {
                         }
                       }}
                       className="w-full"
+                      disabled={userData &&userData.multiTapLevel === 10 ? true : false}
                       variant={`primary`}
                       size={`lg`}
                     >
@@ -301,7 +314,9 @@ const Boost = () => {
                     <div className="flex items-center gap-2 font-normal text-white">
                       <div className="flex items-center gap-0 text-white">
                         <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                        <span> {userData && userData?.max * 2}</span>
+                        <span>
+                          {userData && formatCompactNumber(userData?.chargeLimitPoint)}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -322,7 +337,10 @@ const Boost = () => {
                         <div className="flex items-center justify-center gap-2">
                           <div className="flex items-center gap-0 text-white">
                             <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                            <span>{userData && userData?.max * 2}</span>
+                            <span>
+                              {userData &&
+                                formatCompactNumber(userData?.chargeLimitPoint)}
+                            </span>
                           </div>
                           <div className="flex items-center gap-0">
                             <div className="flex items-center justify-center w-4 h-4 rounded-full p-0.5 bg-white text-black">
@@ -344,7 +362,7 @@ const Boost = () => {
                             updateChargeLimit({
                               userId: String(user?.id),
                               limit: Number(userData?.max) * 2,
-                              point: Number(userData?.max),
+                              level: userData.chargeLevel + 1,
                             })
                           );
                           dispatch(fetchUser(String(user?.id)));
@@ -354,6 +372,9 @@ const Boost = () => {
                           );
                         }
                       }}
+                      disabled={
+                        userData && userData.chargeLevel === 10 ? true : false
+                      }
                       className="w-full"
                       variant={`primary`}
                       size={`lg`}
@@ -376,7 +397,10 @@ const Boost = () => {
                     <div className="flex items-center gap-2 font-normal text-white">
                       <div className="flex items-center gap-0 text-white">
                         <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                        <span>{userData?.refillPoint}</span>
+                        <span>
+                          {userData &&
+                            formatCompactNumber(userData?.refillPoint)}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -397,7 +421,10 @@ const Boost = () => {
                         <div className="flex items-center justify-center gap-2">
                           <div className="flex items-center gap-0 text-white">
                             <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
-                            <span>{userData?.refillPoint}</span>
+                            <span>
+                              {userData &&
+                                formatCompactNumber(userData?.refillPoint)}
+                            </span>
                           </div>
                           <div className="flex items-center gap-0">
                             <div className="flex items-center justify-center w-4 h-4 rounded-full p-0.5 bg-white text-black">
@@ -422,7 +449,7 @@ const Boost = () => {
                             updateRefillSpeed({
                               userId: String(user?.id),
                               speed: Number(userData?.refillSpeed) + 1,
-                              point: Number(userData?.refillPoint),
+                              level: userData.refillLevel + 1,
                             })
                           );
                           dispatch(fetchUser(String(user?.id)));

@@ -129,6 +129,7 @@ export interface User {
   multiTapPoint: number;
   multiTapLevel: number;
   chargeLevel: number;
+  chargeLimitPoint: number;
   refillPoint: number;
   refillLevel: number;
   tapGuru: Response;
