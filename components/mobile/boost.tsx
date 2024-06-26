@@ -357,11 +357,11 @@ const Boost = () => {
                     </DialogHeader>
                     <Button
                       onClick={() => {
-                        if (userData && userData?.totalPoint >= userData?.max) {
+                        if (userData && userData?.totalPoint >= userData?.chargeLimitPoint) {
                           dispatch(
                             updateChargeLimit({
                               userId: String(user?.id),
-                              limit: 500,
+                              limit: userData.max + 500,
                               level: userData.chargeLevel + 1,
                             })
                           );
