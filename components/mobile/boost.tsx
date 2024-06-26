@@ -90,7 +90,7 @@ const Boost = () => {
                   </div>
                 </div>
                 <Dialog>
-                  <DialogTrigger disabled={userData?.fullEnergy?.min === 0 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
+                  <DialogTrigger disabled={userData?.fullEnergy?.min === 0 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20">
                     Use
                   </DialogTrigger>
                   <DialogContent>
@@ -160,7 +160,7 @@ const Boost = () => {
                 </div>
 
                 <Dialog>
-                  <DialogTrigger disabled={userData?.tapGuru?.min === 0 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
+                  <DialogTrigger disabled={userData?.tapGuru?.min === 0 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20">
                     Use
                   </DialogTrigger>
                   <DialogContent>
@@ -239,7 +239,7 @@ const Boost = () => {
                   </div>
                 </div>
                 <Dialog>
-                  <DialogTrigger disabled={userData?.multiTapLevel === 10 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
+                  <DialogTrigger disabled={userData?.multiTapLevel === 10 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20">
                     Open
                   </DialogTrigger>
                   <DialogContent>
@@ -322,7 +322,7 @@ const Boost = () => {
                   </div>
                 </div>
                 <Dialog>
-                  <DialogTrigger disabled={userData?.chargeLevel === 10 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
+                  <DialogTrigger disabled={userData?.chargeLevel === 10 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20">
                     Open
                   </DialogTrigger>
                   <DialogContent>
@@ -406,7 +406,7 @@ const Boost = () => {
                   </div>
                 </div>
                 <Dialog>
-                  <DialogTrigger disabled={userData?.refillLevel === 5 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
+                  <DialogTrigger disabled={userData?.refillLevel === 5 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20">
                     Open
                   </DialogTrigger>
                   <DialogContent>
@@ -493,7 +493,7 @@ const Boost = () => {
                 >
                   <DialogTrigger
                     disabled={userData?.autobot}
-                    className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:pointer-events-none disabled:opacity-50"
+                    className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:pointer-events-none disabled:opacity-20"
                   >
                     Open
                   </DialogTrigger>
