@@ -1,25 +1,19 @@
 "use client";
 
-import { TelegramContext } from "@/context/telegram-context";
-import React, { useContext } from "react";
-import { isMobile } from "react-device-detect";
-import MovileBottomNav from "./mobile/bottom-nav";
+import React from "react";
 import DesktopMessage from "./desktopMessage";
+import MovileBottomNav from "./mobile/bottom-nav";
 
 const MobileLayout = ({ children }: { children: React.ReactNode }) => {
-  const { user } = useContext(TelegramContext);
-
-  if (!isMobile && !user?.id)
-    return (
-      <>
-        <DesktopMessage />
-      </>
-    );
-
   return (
     <>
-      {children}
-      <MovileBottomNav />
+      <div className="hidden lg:block">
+        <DesktopMessage />
+      </div>
+      <div className="block lg:hidden">
+        {children}
+        <MovileBottomNav />
+      </div>
     </>
   );
 };

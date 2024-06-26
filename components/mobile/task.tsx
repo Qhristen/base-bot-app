@@ -181,7 +181,7 @@ const Task = () => {
                             </h4>
                             <div className="flex items-center gap-2 font-bold text-white">
                               <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
-                              <span>{formatCompactNumber(data.point)}</span>
+                              <span>{data.point.toLocaleString().replace(/,/g, ' ')}</span>
                             </div>
                           </div>
                         </div>
@@ -250,7 +250,7 @@ const Task = () => {
                           </h4>
                           <div className="flex items-center gap-2 font-bold text-white">
                             <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
-                            <span>{formatCompactNumber(data.point)}</span>
+                            <span>{data.point.toLocaleString().replace(/,/g, ' ')}</span>
                           </div>
                         </div>
                       </div>
