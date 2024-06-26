@@ -157,7 +157,10 @@ const Task = () => {
           <TabsContent value="leagues">
             <div className="bg-gray rounded-2xl p-3">
               {leagueTask
-                ?.filter((leag) => leag.name !== userData?.league)
+                ?.filter((leag) => {
+                  const claimed = isCompletedLeagueTask(leag.id);
+                  return leag.name !== claimed?.league;
+                })
                 ?.map((data, i) => {
                   const LeagueImage = getImageForUserLevel(
                     `${data.name.toLowerCase()}`
