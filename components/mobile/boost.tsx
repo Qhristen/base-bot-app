@@ -90,7 +90,7 @@ const Boost = () => {
                   </div>
                 </div>
                 <Dialog>
-                  <DialogTrigger className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
+                  <DialogTrigger disabled={userData?.fullEnergy?.min === 0 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
                     Use
                   </DialogTrigger>
                   <DialogContent>
@@ -160,7 +160,7 @@ const Boost = () => {
                 </div>
 
                 <Dialog>
-                  <DialogTrigger className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
+                  <DialogTrigger disabled={userData?.tapGuru?.min === 0 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
                     Use
                   </DialogTrigger>
                   <DialogContent>
@@ -239,7 +239,7 @@ const Boost = () => {
                   </div>
                 </div>
                 <Dialog>
-                  <DialogTrigger className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
+                  <DialogTrigger disabled={userData?.multiTapLevel === 10 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
                     Open
                   </DialogTrigger>
                   <DialogContent>
@@ -322,7 +322,7 @@ const Boost = () => {
                   </div>
                 </div>
                 <Dialog>
-                  <DialogTrigger className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
+                  <DialogTrigger disabled={userData?.chargeLevel === 10 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
                     Open
                   </DialogTrigger>
                   <DialogContent>
@@ -361,7 +361,7 @@ const Boost = () => {
                           dispatch(
                             updateChargeLimit({
                               userId: String(user?.id),
-                              limit: Number(userData?.max) * 2,
+                              limit: 500,
                               level: userData.chargeLevel + 1,
                             })
                           );
@@ -406,7 +406,7 @@ const Boost = () => {
                   </div>
                 </div>
                 <Dialog>
-                  <DialogTrigger className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
+                  <DialogTrigger disabled={userData?.refillLevel === 5 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md">
                     Open
                   </DialogTrigger>
                   <DialogContent>

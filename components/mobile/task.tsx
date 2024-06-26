@@ -123,7 +123,10 @@ const Task = () => {
               <div className="absolute bottom-auto left-auto right-0 top-0 z-10 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 rounded-full bg-red-600 p-1 text-xs"></div>
               Ref Tasks
             </TabsTrigger>
-            <TabsTrigger className="relative inline-flex w-fit" value="referral">
+            <TabsTrigger
+              className="relative inline-flex w-fit"
+              value="referral"
+            >
               {/* <div className="absolute bottom-auto left-auto right-0 top-0 z-10 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 rounded-full bg-red-600 p-1 text-xs"></div> */}
               Referrals
             </TabsTrigger>
@@ -246,7 +249,7 @@ const Task = () => {
                           <div className="flex items-center gap-2 font-bold text-white">
                             <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
                             <span>{formatCompactNumber(data.point)}</span>
-                            </div>
+                          </div>
                         </div>
                       </div>
                       <Button
