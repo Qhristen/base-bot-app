@@ -159,7 +159,7 @@ const Task = () => {
               {leagueTask
                 ?.filter((leag) => {
                   const claimed = isCompletedLeagueTask(leag.id);
-                  return leag.name !== claimed?.league;
+                  return userData?.league !== claimed?.league;
                 })
                 ?.map((data, i) => {
                   const LeagueImage = getImageForUserLevel(
