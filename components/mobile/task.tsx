@@ -191,7 +191,6 @@ const Task = () => {
                                 userId: String(user?.id),
                                 status: "completed",
                                 point: data?.point,
-                                league: data.name,
                                 type: "league",
                               })
                             );
