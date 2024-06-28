@@ -9,15 +9,17 @@ import { TelegramContext } from "@/context/telegram-context";
 const MobileLayout = ({ children }: { children: React.ReactNode }) => {
   const { user } = useContext(TelegramContext);
 
+  if (!isMobile && !user?.id)
+    return (
+      <>
+        <DesktopMessage />
+      </>
+    );
+
   return (
     <>
-      <div className={`${isMobile ? "hidden" : "block"}`}>
-        <DesktopMessage />
-      </div>
-      <div className={`${isMobile ? "block" : "hidden"} lg:hidden`}>
-        {children}
-        <MovileBottomNav />
-      </div>
+      {children}
+      <MovileBottomNav />
     </>
   );
 };
