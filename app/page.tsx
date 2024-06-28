@@ -5,6 +5,7 @@ import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -16,20 +17,27 @@ export default function Home() {
             Tap into the Future of Crypto Earnings
           </h1>
           <p className="py-6 text-gray-light">
-            Tap on the coin and see your balance rise – experience the
-            thrill of earning crypto effortlessly with Base.
+            Tap on the coin and see your balance rise – experience the thrill of
+            earning crypto effortlessly with Base.
           </p>
-          <Button variant={`primary`}>Join Base</Button>
+          <Link href={`https://t.me/taponbase`}>
+            <Button variant={`primary`}>Join Base</Button>
+          </Link>
         </div>
         <div className="scale-50 hideen lg:block lg:scale-100">
           {/* <BaseLogoLg className="" /> */}
-        <Image src={BaseLogoSm} width={500} height={300} alt="BaseLogoLg" />
+          <Image src={BaseLogoSm} width={500} height={300} alt="BaseLogoLg" />
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-4 mt-20 p-4">
-        <div className="flex items-center gap-3 p-5 text-white bg-gray rounded-2xl">
-          <Image src={NoviceBadge} width={400} height={200} alt="NoviceBadge" />
+        <div className="flex items-center flex-col p-5 text-white bg-gray rounded-2xl lg:flex-row">
+          <Image
+            src={`/badges/MasterBadge.png`}
+            width={300}
+            height={150}
+            alt="NoviceBadge"
+          />
           <div>
             <h2 className="font-bold text-3xl">
               Grow as you <br /> share{" "}
@@ -57,7 +65,9 @@ export default function Home() {
         <h1 className="font-bold text-3xl py-4">
           Join our telegram community to <br /> explore more
         </h1>
-        <Button variant={`primary`}>Join telegram channel</Button>
+        <Link href={`https://t.me/taponbase`}>
+          <Button variant={`primary`}>Join telegram channel</Button>
+        </Link>
       </div>
       <Footer />
     </Container>
