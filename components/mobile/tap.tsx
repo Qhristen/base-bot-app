@@ -79,11 +79,9 @@ const Tap = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       dispatch(updateTapguru());
-      dispatch(
-        updateMiningInfo({
-          perClick: Number(userData && userData.perclick),
-        })
-      );
+      if (userData?.perclick) {
+        dispatch(updateMiningInfo({ perClick: Number(userData.perclick) }));
+      }
       // dispatch(
       //   getTapGuru({
       //     ...userData.tapGuru,
@@ -96,7 +94,7 @@ const Tap = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [userData?.tapGuru.min, dispatch, userData?.perclick]);
+  }, [userData, dispatch]);
 
   useEffect(() => {
     const timeOut = setTimeout(() => {
