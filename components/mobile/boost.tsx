@@ -8,6 +8,7 @@ import {
   RefillSpeedIcon,
 } from "@/assets/icons";
 import { TelegramContext } from "@/context/telegram-context";
+import { CountdownTimer } from "@/hooks/count-down-timer";
 import {
   claimAutoBotPoints,
   getFullEnergy,
@@ -45,6 +46,7 @@ const Boost = () => {
     miningInfo,
   } = useAppSelector((state) => state.user);
   const { status: boostStatus } = useAppSelector((state) => state.boost);
+  const { hours, minutes, seconds } = CountdownTimer();
 
   useEffect(() => {
     dispatch(fetchUser(String(user?.id)));
@@ -82,15 +84,27 @@ const Boost = () => {
                   </div>
                   <div className="text-white">
                     <h4 className="font-medium text-white">Full energy bar</h4>
-                    <div className="flex items-center gap-2 font-normal text-white">
-                      <span>
-                        {userData?.fullEnergy?.min}/{userData?.fullEnergy?.max}
-                      </span>
-                    </div>
+                    {userData?.fullEnergy?.min === 0 ? (
+                      <div className="flex items-center gap-1 font-light text-sm text-gray-light">
+                        <span>{hours}h</span>
+                        <span>{minutes}m</span>
+                        <span>{seconds}s</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 font-normal text-white">
+                        <span>
+                          {userData?.fullEnergy?.min}/
+                          {userData?.fullEnergy?.max}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <Dialog>
-                  <DialogTrigger disabled={userData?.fullEnergy?.min === 0 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20">
+                  <DialogTrigger
+                    disabled={userData?.fullEnergy?.min === 0 ? true : false}
+                    className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20"
+                  >
                     Use
                   </DialogTrigger>
                   <DialogContent>
@@ -151,16 +165,28 @@ const Boost = () => {
                   </div>
                   <div className="text-white">
                     <h4 className="font-medium text-white">Turbo</h4>
-                    <div className="flex items-center gap-2 font-normal text-white">
-                      <span>
-                        {userData?.tapGuru?.min}/{userData?.tapGuru?.max}
-                      </span>
-                    </div>
+
+                    {userData?.tapGuru?.min === 0 ? (
+                      <div className="flex items-center gap-1 font-light text-sm text-gray-light">
+                        <span>{hours}h</span>
+                        <span>{minutes}m</span>
+                        <span>{seconds}s</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 font-normal text-white">
+                        <span>
+                          {userData?.tapGuru?.min}/{userData?.tapGuru?.max}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 <Dialog>
-                  <DialogTrigger disabled={userData?.tapGuru?.min === 0 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20">
+                  <DialogTrigger
+                    disabled={userData?.tapGuru?.min === 0 ? true : false}
+                    className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20"
+                  >
                     Use
                   </DialogTrigger>
                   <DialogContent>
@@ -239,7 +265,10 @@ const Boost = () => {
                   </div>
                 </div>
                 <Dialog>
-                  <DialogTrigger disabled={userData?.multiTapLevel === 10 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20">
+                  <DialogTrigger
+                    disabled={userData?.multiTapLevel === 10 ? true : false}
+                    className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20"
+                  >
                     Open
                   </DialogTrigger>
                   <DialogContent>
@@ -293,7 +322,9 @@ const Boost = () => {
                         }
                       }}
                       className="w-full"
-                      disabled={userData &&userData.multiTapLevel === 10 ? true : false}
+                      disabled={
+                        userData && userData.multiTapLevel === 10 ? true : false
+                      }
                       variant={`primary`}
                       size={`lg`}
                     >
@@ -315,14 +346,18 @@ const Boost = () => {
                       <div className="flex items-center gap-0 text-white">
                         <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
                         <span>
-                          {userData && formatCompactNumber(userData?.chargeLimitPoint)}
+                          {userData &&
+                            formatCompactNumber(userData?.chargeLimitPoint)}
                         </span>
                       </div>
                     </div>
                   </div>
                 </div>
                 <Dialog>
-                  <DialogTrigger disabled={userData?.chargeLevel === 10 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20">
+                  <DialogTrigger
+                    disabled={userData?.chargeLevel === 10 ? true : false}
+                    className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20"
+                  >
                     Open
                   </DialogTrigger>
                   <DialogContent>
@@ -357,7 +392,10 @@ const Boost = () => {
                     </DialogHeader>
                     <Button
                       onClick={() => {
-                        if (userData && userData?.totalPoint >= userData?.chargeLimitPoint) {
+                        if (
+                          userData &&
+                          userData?.totalPoint >= userData?.chargeLimitPoint
+                        ) {
                           dispatch(
                             updateChargeLimit({
                               userId: String(user?.id),
@@ -406,7 +444,10 @@ const Boost = () => {
                   </div>
                 </div>
                 <Dialog>
-                  <DialogTrigger disabled={userData?.refillLevel === 5 ? true : false} className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20">
+                  <DialogTrigger
+                    disabled={userData?.refillLevel === 5 ? true : false}
+                    className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20"
+                  >
                     Open
                   </DialogTrigger>
                   <DialogContent>

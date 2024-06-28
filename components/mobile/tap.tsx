@@ -96,7 +96,7 @@ const Tap = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [userData?.tapGuru.min, dispatch]);
+  }, [userData?.tapGuru.min, dispatch, userData?.perclick]);
 
   useEffect(() => {
     const timeOut = setTimeout(() => {

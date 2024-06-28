@@ -18,7 +18,7 @@ class IntervalService {
           } else {
             store.dispatch(incrementMiningLimit(speed));
           }
-        }, 2000); // Set interval to 2 second
+        }, 1000); // Set interval to 1 second
     };
 
   }

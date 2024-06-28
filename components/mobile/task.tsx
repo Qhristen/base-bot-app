@@ -23,7 +23,7 @@ import { formatCompactNumber } from "@/utils/formatNumber";
 import { getImageForUserLevel } from "@/utils/userLevel";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useContext, useEffect } from "react";
 import CircularProgressBar from "../CircularProgressBar";
 import Container from "../container";
@@ -78,6 +78,10 @@ const Task = () => {
     return checkTask;
   };
 
+  const searchParams = useSearchParams()!;
+
+  const selected = searchParams.get("tab") || "special";
+
   if (status === "loading" || userStatus === "loading")
     return (
       <CircularProgressBar
@@ -109,7 +113,12 @@ const Task = () => {
             </div>
           </Link>
         </div>
-        <Tabs defaultValue="special" className="w-full mt-10">
+        <Tabs
+          value={selected}
+          // defaultValue="special"
+          onValueChange={(value) => router.push(`/mobile/task?tab=${value}`)}
+          className="w-full mt-10"
+        >
           <TabsList className="flex itens justify-between mb-5">
             <TabsTrigger className="relative inline-flex w-fit" value="special">
               {/* <div className="absolute bottom-auto left-auto right-0 top-0 z-10 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 rounded-full bg-red-600 p-1 text-xs"></div> */}
@@ -159,7 +168,10 @@ const Task = () => {
               {leagueTask
                 ?.filter((leag) => {
                   const claimed = isCompletedLeagueTask(leag.id);
-                  return userData?.league !== claimed?.league && claimed?.taskId !== leag.id;
+                  return (
+                    userData?.league !== claimed?.league &&
+                    claimed?.taskId !== leag.id
+                  );
                 })
                 ?.map((data, i) => {
                   const LeagueImage = getImageForUserLevel(
@@ -181,7 +193,9 @@ const Task = () => {
                             </h4>
                             <div className="flex items-center gap-2 font-bold text-white">
                               <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
-                              <span>{data.point.toLocaleString().replace(/,/g, ' ')}</span>
+                              <span>
+                                {data.point.toLocaleString().replace(/,/g, " ")}
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -200,6 +214,7 @@ const Task = () => {
                             if (res.meta.requestStatus === "fulfilled") {
                               dispatch(fetchUser(String(user?.id)));
                               dispatch(fetchAlluserTask());
+                              router.push(`/mobile/task?tab=leagues`)
                               router.refresh();
                             }
                           }}
@@ -250,7 +265,9 @@ const Task = () => {
                           </h4>
                           <div className="flex items-center gap-2 font-bold text-white">
                             <ArcticonsCoin className="fill-yellow scale-95 stroke-white" />
-                            <span>{data.point.toLocaleString().replace(/,/g, ' ')}</span>
+                            <span>
+                              {data.point.toLocaleString().replace(/,/g, " ")}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -269,6 +286,7 @@ const Task = () => {
                           if (res.meta.requestStatus === "fulfilled") {
                             dispatch(fetchUser(String(user?.id)));
                             dispatch(fetchAlluserTask());
+                            router.push(`/mobile/task?tab=ref`)
                             router.refresh();
                           }
                         }}
