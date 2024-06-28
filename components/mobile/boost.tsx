@@ -266,7 +266,7 @@ const Boost = () => {
                 </div>
                 <Dialog>
                   <DialogTrigger
-                    disabled={userData?.multiTapLevel === 10 ? true : false}
+                    // disabled={userData?.multiTapLevel === 10 ? true : false}
                     className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20"
                   >
                     Open
@@ -322,9 +322,9 @@ const Boost = () => {
                         }
                       }}
                       className="w-full"
-                      disabled={
-                        userData && userData.multiTapLevel === 10 ? true : false
-                      }
+                      // disabled={
+                      //   userData && userData.multiTapLevel === 10 ? true : false
+                      // }
                       variant={`primary`}
                       size={`lg`}
                     >
@@ -355,7 +355,7 @@ const Boost = () => {
                 </div>
                 <Dialog>
                   <DialogTrigger
-                    disabled={userData?.chargeLevel === 10 ? true : false}
+                    // disabled={userData?.chargeLevel === 10 ? true : false}
                     className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20"
                   >
                     Open
@@ -410,9 +410,9 @@ const Boost = () => {
                           );
                         }
                       }}
-                      disabled={
-                        userData && userData.chargeLevel === 10 ? true : false
-                      }
+                      // disabled={
+                      //   userData && userData.chargeLevel === 10 ? true : false
+                      // }
                       className="w-full"
                       variant={`primary`}
                       size={`lg`}
@@ -445,7 +445,7 @@ const Boost = () => {
                 </div>
                 <Dialog>
                   <DialogTrigger
-                    disabled={userData?.refillLevel === 5 ? true : false}
+                    // disabled={userData?.refillLevel === 5 ? true : false}
                     className="bg-primary font-bold text-black text-lg hover:bg-primary/10 h-9 px-3 rounded-md disabled:opacity-20"
                   >
                     Open

@@ -29,7 +29,7 @@ export const getTapGuru = createAsyncThunk(
       max,
       active,
       userId,
-    }: { min: number; max: number; active: boolean; userId: string },
+    }: { min?: number; max?: number; active: boolean; userId: string },
     { rejectWithValue }
   ) => {
     try {

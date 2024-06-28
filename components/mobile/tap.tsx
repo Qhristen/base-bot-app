@@ -78,23 +78,24 @@ const Tap = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      dispatch(updateTapguru());
-      if (userData?.perclick) {
-        dispatch(updateMiningInfo({ perClick: Number(userData.perclick) }));
+      if (userData?.tapGuru && userData.tapGuru.min != 0) {
+        dispatch(updateTapguru());
+        if (userData?.perclick) {
+          dispatch(updateMiningInfo({ perClick: Number(userData.perclick) }));
+        }
+        // dispatch(
+        //   getTapGuru({
+        //     active: false,
+        //     userId: String(user?.id),
+        //   })
+        // );
       }
-      // dispatch(
-      //   getTapGuru({
-      //     ...userData.tapGuru,
-      //     active: false,
-      //     userId: String(user?.id),
-      //   })
-      // );
     }, 20000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [userData, dispatch]);
+  }, [dispatch]);
 
   useEffect(() => {
     const timeOut = setTimeout(() => {
@@ -137,7 +138,7 @@ const Tap = () => {
           status: "idle",
         })
       );
-      dispatch(incrementPoints(miningInfo.perClick ));
+      dispatch(incrementPoints(miningInfo.perClick));
     } else {
       dispatch(updateMiningInfo({ status: "stop" }));
       // webApp?.showAlert("Mining limit reached, buy more refill speed.");

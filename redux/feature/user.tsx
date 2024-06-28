@@ -171,14 +171,18 @@ export const userSlice = createSlice({
           ...state.miningInfo,
           perClick: Number(state?.user?.perclick) * 5,
         };
-        // updateMiningInfoInLocalStorage({
-        //   ...state.miningInfo,
-        //   perClick: Number(state?.user?.perclick) * 5,
-        // });
+          
       }
     },
     updateMiningInfo(state, action: PayloadAction<Partial<MiningInfo>>) {
       state.miningInfo = { ...state.miningInfo, ...action.payload };
+      if (state.user?.tapGuru) {
+        state.user.tapGuru = {
+          ...state.user?.tapGuru,
+          active: false,
+        };
+      }
+
       // state.pointCount += action?.payload?.perClick;
       // updateMiningInfoInLocalStorage({...state.miningInfo});
     },
@@ -261,6 +265,13 @@ export const userSlice = createSlice({
           ...state.miningInfo,
           perClick: state.miningInfo.perClick * 5,
         };
+
+        if (state.user?.tapGuru) {
+          state.user.tapGuru = {
+            ...state.user?.tapGuru,
+            active: true,
+          };
+        }
       })
       .addCase(updateRefillSpeed.pending, (state, action) => {
         state.status = "loading";
