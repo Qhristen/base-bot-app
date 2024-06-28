@@ -7,19 +7,18 @@ import { isMobile } from "react-device-detect";
 import { TelegramContext } from "@/context/telegram-context";
 
 const MobileLayout = ({ children }: { children: React.ReactNode }) => {
-  const { user } = useContext(TelegramContext);
-
-  if (!isMobile && !user?.id)
-    return (
-      <>
-        <DesktopMessage />
-      </>
-    );
+  const { webApp } = useContext(TelegramContext);
 
   return (
     <>
-      {children}
-      <MovileBottomNav />
+      {isMobile && webApp ? (
+        <>
+          {children}
+          <MovileBottomNav />
+        </>
+      ) : (
+        <DesktopMessage />
+      )}
     </>
   );
 };
