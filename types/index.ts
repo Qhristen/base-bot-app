@@ -36,9 +36,9 @@ export interface IWebApp {
   headerColor: string;
   backgroundColor: string;
   BackButton: {
-    show: ()=> void;
+    show: () => void;
   };
-  openLink: (url: string)=> void
+  openLink: (url: string) => void;
   MainButton: {
     text: string;
     color: string;
@@ -137,6 +137,9 @@ export interface User {
   friendsReferred: number;
   lastInteraction: Date;
   league: string;
+  isSpecialDOne: boolean;
+  isLeagueDone: boolean;
+  isRefDone: boolean;
 }
 
 export interface Response {
@@ -147,16 +150,15 @@ export interface Response {
 
 export interface Referals {
   referredFrom: User;
-  referredTo:   User;
-  point:        number;
+  referredTo: User;
+  point: number;
 }
 
 export interface Badge {
   id: string;
-  name:   string;
+  name: string;
   point: number;
 }
-
 
 export interface TouchPoint {
   id: number;
@@ -182,7 +184,6 @@ export interface IStats {
   totalPoints: number;
   totalTouches: number;
 }
-
 
 export interface SubmitType {
   name: string | undefined;

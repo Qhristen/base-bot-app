@@ -121,15 +121,21 @@ const Task = () => {
         >
           <TabsList className="flex itens justify-between mb-5">
             <TabsTrigger className="relative inline-flex w-fit" value="special">
-              {/* <div className="absolute bottom-auto left-auto right-0 top-0 z-10 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 rounded-full bg-red-600 p-1 text-xs"></div> */}
+              {userData?.isSpecialDOne  ? "" : (
+                <div className="absolute bottom-auto left-auto right-0 top-0 z-10 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 rounded-full bg-red-600 p-1 text-xs"></div>
+              )}{" "}
               Special
             </TabsTrigger>
             <TabsTrigger className="relative inline-flex w-fit" value="leagues">
-              <div className="absolute bottom-auto left-auto right-0 top-0 z-10 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 rounded-full bg-red-600 p-1 text-xs"></div>
+              {userData?.isLeagueDone  ? "" :(
+                <div className="absolute bottom-auto left-auto right-0 top-0 z-10 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 rounded-full bg-red-600 p-1 text-xs"></div>
+              )}{" "}
               Leagues
             </TabsTrigger>
             <TabsTrigger className="relative inline-flex w-fit" value="ref">
-              <div className="absolute bottom-auto left-auto right-0 top-0 z-10 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 rounded-full bg-red-600 p-1 text-xs"></div>
+              {userData?.isRefDone ? "" :(
+                <div className="absolute bottom-auto left-auto right-0 top-0 z-10 inline-block -translate-y-1/2 translate-x-2/4 rotate-0 skew-x-0 skew-y-0 scale-x-100 scale-y-100 rounded-full bg-red-600 p-1 text-xs"></div>
+              )}{" "}
               Ref Tasks
             </TabsTrigger>
             <TabsTrigger
@@ -214,7 +220,7 @@ const Task = () => {
                             if (res.meta.requestStatus === "fulfilled") {
                               dispatch(fetchUser(String(user?.id)));
                               dispatch(fetchAlluserTask());
-                              router.push(`/mobile/task?tab=leagues`)
+                              router.push(`/mobile/task?tab=leagues`);
                               router.refresh();
                             }
                           }}
@@ -286,7 +292,7 @@ const Task = () => {
                           if (res.meta.requestStatus === "fulfilled") {
                             dispatch(fetchUser(String(user?.id)));
                             dispatch(fetchAlluserTask());
-                            router.push(`/mobile/task?tab=ref`)
+                            router.push(`/mobile/task?tab=ref`);
                             router.refresh();
                           }
                         }}

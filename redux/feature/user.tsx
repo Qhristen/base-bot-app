@@ -1,4 +1,4 @@
-import { Badge, Referals, User } from "@/types";
+import { Badge, Referals, SpecialTask, User, User_Activity } from "@/types";
 import { getLocalStorage, setLocalStorage } from "@/utils/local-storage-mgt";
 import AxiosBaseUrl from "@/utils/services/axios-base-config";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
