@@ -254,7 +254,7 @@ const Boost = () => {
                   <div className="text-white">
                     <h4 className="font-medium text-white">Multi Bop</h4>
                     <div className="flex items-center gap-2 font-normal text-white">
-                      <div className="flex items-center gap-0 text-white">
+                      <div className="flex items-center gap-1 text-white">
                         <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
                         <span>
                           {userData &&
@@ -343,7 +343,7 @@ const Boost = () => {
                   <div className="text-white">
                     <h4 className="font-medium text-white">Charge Limit</h4>
                     <div className="flex items-center gap-2 font-normal text-white">
-                      <div className="flex items-center gap-0 text-white">
+                      <div className="flex items-center gap-1 text-white">
                         <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
                         <span>
                           {userData &&
@@ -433,7 +433,7 @@ const Boost = () => {
                   <div className="text-white">
                     <h4 className="font-medium text-white">Refill speed</h4>
                     <div className="flex items-center gap-2 font-normal text-white">
-                      <div className="flex items-center gap-0 text-white">
+                      <div className="flex items-center gap-1 text-white">
                         <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
                         <span>
                           {userData &&
@@ -520,7 +520,7 @@ const Boost = () => {
                   <div className="text-white">
                     <h4 className="font-medium text-white">Auto tap bot</h4>
                     <div className="flex items-center gap-2 font-normal text-white">
-                      <div className="flex items-center gap-0 text-white">
+                      <div className="flex items-center gap-1 text-white">
                         <ArcticonsCoinGold className="fill-yellow scale-95 stroke-white" />
                         <span>500 000</span>
                       </div>
