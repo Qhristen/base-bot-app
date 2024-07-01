@@ -170,8 +170,8 @@ export const userSlice = createSlice({
         state.miningInfo = {
           ...state.miningInfo,
           perClick: Number(state?.user?.perclick) * 5,
+          status: "stop",
         };
-          
       }
     },
     updateMiningInfo(state, action: PayloadAction<Partial<MiningInfo>>) {
@@ -201,9 +201,13 @@ export const userSlice = createSlice({
       );
     },
     incrementMiningLimit(state, action) {
-      if (state.miningInfo.limit < state.miningInfo.max) {
+      if (
+        state.miningInfo.limit < state.miningInfo.max &&
+        state.miningInfo.status === "mining"
+      ) {
         state.miningInfo = {
           ...state.miningInfo,
+          status: "mining",
           limit: Math.max(
             0,
             Math.min(

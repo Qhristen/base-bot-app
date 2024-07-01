@@ -65,14 +65,7 @@ const Tap = () => {
       intervalService.stopInterval();
     }
     return () => {
-      // intervalService.stopInterval();// dispatch(
-      dispatch(
-        updateLimit({
-          max: Number(miningInfo?.max),
-          min: Number(miningInfo?.limit),
-          userId: String(user?.id),
-        })
-      );
+      intervalService.stopInterval();
     };
   }, [intervalService, miningInfo, userData?.refillSpeed]);
 
@@ -106,6 +99,13 @@ const Tap = () => {
         })
       );
       dispatch(clearTap());
+      dispatch(
+        updateLimit({
+          max: Number(miningInfo?.max),
+          min: Number(miningInfo?.limit),
+          userId: String(user?.id),
+        })
+      );
     }, 1000);
 
     return () => clearTimeout(timeOut);
@@ -133,9 +133,14 @@ const Tap = () => {
           ...miningInfo,
           limit: Math.max(
             0,
-            Math.min(miningInfo.limit - miningInfo.perClick, miningInfo.max)
+            miningInfo.status === "stop"
+              ? miningInfo.limit
+              : Math.min(miningInfo.limit - miningInfo.perClick, miningInfo.max)
           ),
-          status: "idle",
+          status:
+            userData && userData?.perclick * 5 === miningInfo.perClick
+              ? "stop"
+              : "mining",
         })
       );
       dispatch(incrementPoints(miningInfo.perClick));
@@ -149,7 +154,10 @@ const Tap = () => {
     dispatch(setIsPressed(false));
     dispatch(
       updateMiningInfo({
-        status: "mining",
+        status:
+          userData && userData?.perclick * 5 === miningInfo.perClick
+            ? "stop"
+            : "mining",
       })
     );
   };
